@@ -13,6 +13,8 @@ scalacOptions in ThisBuild ++= {
   }
 }
 
+releaseCrossBuild := true
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
