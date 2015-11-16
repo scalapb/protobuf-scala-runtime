@@ -15,6 +15,8 @@ scalacOptions in ThisBuild ++= {
 
 releaseCrossBuild := true
 
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
