@@ -27,17 +27,20 @@ lazy val root = project.in(file(".")).
   settings(
     publish := {},
     publishLocal := {},
+    publishArtifact := false,
+    aggregate in sonatypeRelease := false,
     projectReleaseSettings
   )
 
-lazy val protobufRuntimeScala = crossProject.crossType(CrossType.Pure).in(file(".")).
-  settings(
+lazy val protobufRuntimeScala = crossProject.crossType(CrossType.Pure).in(file("."))
+  .settings(
     name := "protobuf-runtime-scala"
-  ).
-  jvmSettings(
+  )
+  .settings(sonatypeSettings: _*)
+  .jvmSettings(
     // Add JVM-specific settings here
-  ).
-  jsSettings(
+  )
+  .jsSettings(
     // Add JS-specific settings here
   )
   
