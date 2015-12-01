@@ -9,6 +9,8 @@ object Descriptors {
 
   class FieldDescriptor
 
+  class FileDescriptor
+
   class Descriptor {
     def getFields(): java.util.List[FieldDescriptor] = ???
   }
