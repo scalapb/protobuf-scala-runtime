@@ -1,10 +1,20 @@
 package com.google.protobuf
 
 object Descriptors {
-  class EnumValueDescriptor
+  class EnumValueDescriptor {
+    def getName(): String = ???
+
+    def getNumber(): Int = ???
+  }
 
   class EnumDescriptor {
+    def getName(): String = ???
+
     def getValues(): java.util.List[EnumValueDescriptor] = ???
+
+    def findValueByName(name: String): EnumValueDescriptor = ???
+
+    def findValueByNumber(number: Int): EnumValueDescriptor = ???
   }
 
   class FieldDescriptor {
