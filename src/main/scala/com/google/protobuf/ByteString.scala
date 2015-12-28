@@ -172,6 +172,8 @@ object ByteString {
 
   def copyFrom(bytes: Array[Byte]): ByteString = copyFrom(bytes, 0, bytes.length)
 
+  def copyFromUtf8(text: String): ByteString = copyFrom(text.getBytes(Internal.UTF_8))
+
   private[protobuf] def useBuffer(bytes: Array[Byte]) =
     new ByteString(bytes, 0, bytes.length)
 
