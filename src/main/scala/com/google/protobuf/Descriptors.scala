@@ -1,5 +1,7 @@
 package com.google.protobuf
 
+import com.google.protobuf.DescriptorProtos._
+
 object Descriptors {
   class EnumValueDescriptor {
     def getName(): String = ???
@@ -10,6 +12,8 @@ object Descriptors {
   class EnumDescriptor {
     def getName(): String = ???
 
+    def getContainingType(): Descriptor = ???
+
     def getValues(): java.util.List[EnumValueDescriptor] = ???
 
     def findValueByName(name: String): EnumValueDescriptor = ???
@@ -19,6 +23,8 @@ object Descriptors {
 
   class FieldDescriptor {
     def getName(): String = ???
+
+    def getContainingType(): Descriptor = ???
 
     def getNumber(): Int = ???
 
@@ -55,9 +61,19 @@ object Descriptors {
     }
   }
 
-  class FileDescriptor
+  class FileDescriptor {
+    def getMessageTypes(): java.util.List[Descriptor] = ???
+  }
+
+  object FileDescriptor {
+    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptorProto]): FileDescriptor = ???
+  }
 
   class Descriptor {
+    def getContainingType(): Descriptor = ???
+
     def getFields(): java.util.List[FieldDescriptor] = ???
+
+    def getMessageTypes(): java.util.List[Descriptor] = ???
   }
 }
