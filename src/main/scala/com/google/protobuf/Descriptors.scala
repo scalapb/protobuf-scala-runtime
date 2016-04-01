@@ -66,7 +66,7 @@ object Descriptors {
   }
 
   object FileDescriptor {
-    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptorProto]): FileDescriptor = ???
+    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = ???
   }
 
   class Descriptor {
