@@ -1,8 +1,8 @@
 import ReleaseTransformations._
 
-scalaVersion in ThisBuild := "2.11.7"
+scalaVersion in ThisBuild := "2.11.8"
 
-crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.7", "2.12.0-M3")
+crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.8", "2.12.0-M4")
 
 organization in ThisBuild := "com.trueaccord.scalapb"
 
@@ -37,12 +37,16 @@ lazy val root = project.in(file(".")).
   settings(
     publish := {},
     publishLocal := {},
+    test := {},
     publishArtifact := false
   )
 
 lazy val protobufRuntimeScala = crossProject.crossType(CrossType.Pure).in(file("."))
   .settings(
-    name := "protobuf-runtime-scala"
+    name := "protobuf-runtime-scala",
+    libraryDependencies ++= Seq(
+      "org.scalatest" %%% "scalatest" % "3.0.0-M15" % "test"
+    )
   )
   .jvmSettings(
     // Add JVM-specific settings here

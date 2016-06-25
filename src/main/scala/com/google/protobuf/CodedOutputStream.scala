@@ -344,11 +344,11 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
   }
 
   def writeDoubleNoTag(value: Double) {
-    writeRawLittleEndian64(java.lang.Double.doubleToRawLongBits(value))
+    writeRawLittleEndian64(java.lang.Double.doubleToLongBits(value))
   }
 
   def writeFloatNoTag(value: Float) {
-    writeRawLittleEndian32(java.lang.Float.floatToRawIntBits(value))
+    writeRawLittleEndian32(java.lang.Float.floatToIntBits(value))
   }
 
   def writeUInt64NoTag(value: Long) {
