@@ -33,15 +33,14 @@ releaseProcess := Seq[ReleaseStep](
 )
 
 lazy val root = project.in(file(".")).
-  // aggregate(runtimeJS, runtimeJVM).
+  aggregate(runtimeJS, runtimeJVM).
   settings(
-    test := {},
     publish := {},
     publishLocal := {},
     publishArtifact := false
   )
 
-lazy val protobufRuntimeScala = crossProject.crossType(CrossType.Pure).in(file("."))
+lazy val protobufRuntimeScala = crossProject.in(file("."))
   .settings(
     name := "protobuf-runtime-scala",
     libraryDependencies ++= Seq(
