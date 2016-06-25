@@ -45,7 +45,7 @@ lazy val protobufRuntimeScala = crossProject.crossType(CrossType.Pure).in(file("
   .settings(
     name := "protobuf-runtime-scala",
     libraryDependencies ++= Seq(
-      "org.scalatest" %%% "scalatest" % "3.0.0-M15" % "test"
+      "org.scalatest" %%% "scalatest" % "3.0.0-RC3" % "test"
     )
   )
   .jvmSettings(
