@@ -33,11 +33,11 @@ releaseProcess := Seq[ReleaseStep](
 )
 
 lazy val root = project.in(file(".")).
-  aggregate(runtimeJS, runtimeJVM).
+  // aggregate(runtimeJS, runtimeJVM).
   settings(
+    test := {},
     publish := {},
     publishLocal := {},
-    test := {},
     publishArtifact := false
   )
 
