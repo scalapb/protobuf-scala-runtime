@@ -63,6 +63,8 @@ object Descriptors {
 
   class FileDescriptor {
     def getMessageTypes(): java.util.List[Descriptor] = ???
+
+    def getEnumTypes(): java.util.List[EnumDescriptor] = ???
   }
 
   object FileDescriptor {
@@ -74,6 +76,10 @@ object Descriptors {
 
     def getFields(): java.util.List[FieldDescriptor] = ???
 
-    def getMessageTypes(): java.util.List[Descriptor] = ???
+    def getNestedTypes(): java.util.List[Descriptor] = ???
+
+    def getEnumTypes(): java.util.List[EnumDescriptor] = ???
+
+    def getFullName(): String = ???
   }
 }

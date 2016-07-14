@@ -143,7 +143,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     if (isEmpty) "" else toStringInternal(charset)
   }
 
-  private[protobuf] def toByteArray(): Array[Byte] = {
+  def toByteArray(): Array[Byte] = {
     val dest = new Array[Byte](length)
     System.arraycopy(bytes, start, dest, 0, len)
     dest

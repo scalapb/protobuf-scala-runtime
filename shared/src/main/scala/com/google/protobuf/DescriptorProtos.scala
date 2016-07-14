@@ -6,5 +6,7 @@ object DescriptorProtos {
   object FileDescriptorProto {
     def parseFrom(b: Array[Byte]): FileDescriptorProto = ???
   }
+
+  def getDescriptor(): com.google.protobuf.Descriptors.FileDescriptor = ???
 }
 
