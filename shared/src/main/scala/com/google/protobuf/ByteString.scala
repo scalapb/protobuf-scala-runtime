@@ -181,8 +181,10 @@ object ByteString {
 
   def newOutput() = new Output()
 
-  class Output extends OutputStream {
-    private val bytes = new mutable.ArrayBuffer[Byte]
+  def newOutput(initialSize: Int) = new Output(initialSize)
+
+  class Output(initialSize: Int = 16) extends OutputStream {
+    private val bytes = new mutable.ArrayBuffer[Byte](initialSize)
     
     override def write(b: Int) {
       bytes += b.toByte
