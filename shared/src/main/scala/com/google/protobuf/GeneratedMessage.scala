@@ -1,7 +1,7 @@
 package com.google.protobuf
 
 trait Message {
-  def getUnknownFields(): UnknownFieldSet
+  def getUnknownFields(): UnknownFieldSet = ???
 }
 
 trait GeneratedMessage extends Message {
@@ -16,6 +16,8 @@ class UnknownFieldSet {
 }
 
 object UnknownFieldSet {
-  class Field
+  class Field {
+    def getLengthDelimitedList(): java.util.List[ByteString] = ???
+  }
 }
 
