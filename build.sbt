@@ -54,7 +54,7 @@ lazy val protobufRuntimeScala = crossProject.in(file("."))
     // Add JS-specific settings here
     scalacOptions += {
       val a = (baseDirectory in LocalRootProject).value.toURI.toString
-      val g = "https://raw.githubusercontent.com/trueaccord/protobuf-scala-runtime/" + sys.process.Process("git rev-parse HEAD").lines_!.head
+      val g = "https://raw.githubusercontent.com/scalapb/protobuf-scala-runtime/" + sys.process.Process("git rev-parse HEAD").lines_!.head
       s"-P:scalajs:mapSourceURI:$a->$g/"
     }
   )

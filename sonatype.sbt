@@ -1,7 +1,7 @@
 sonatypeProfileName := "com.trueaccord"
 
 pomExtra in Global := {
-  <url>https://github.com/trueaccord/protobuf-scala-runtime</url>
+  <url>https://github.com/scalapb/protobuf-scala-runtime</url>
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -9,9 +9,9 @@ pomExtra in Global := {
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:github.com:trueaccord/protobuf-scala-runtime.git</connection>
-    <developerConnection>scm:git:git@github.com:trueaccord/protobuf-runtime-scala.git</developerConnection>
-    <url>github.com/trueaccord/protobuf-scala-runtime</url>
+    <connection>scm:git:github.com:scalapb/protobuf-scala-runtime.git</connection>
+    <developerConnection>scm:git:git@github.com:scalapb/protobuf-runtime-scala.git</developerConnection>
+    <url>github.com/scalapb/protobuf-scala-runtime</url>
   </scm>
   <developers>
     <developer>
