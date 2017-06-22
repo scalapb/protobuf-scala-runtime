@@ -1,8 +1,11 @@
 import ReleaseTransformations._
+import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-scalaVersion in ThisBuild := "2.11.8"
+val Scala211 = "2.11.12"
 
-crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.8", "2.12.1", "2.13.0-M1")
+crossScalaVersions in ThisBuild := Seq("2.10.6", Scala211, "2.12.1", "2.13.0-M1")
+
+scalaVersion in ThisBuild := Scala211
 
 organization in ThisBuild := "com.thesamet.scalapb"
 
@@ -25,6 +28,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
+  releaseStepCommandAndRemaining(s";++${Scala211};protobufRuntimeScalaNative/publishSigned"),
   ReleaseStep(action = Command.process("publishSigned", _), enableCrossBuild = true),
   setNextVersion,
   commitNextVersion,
@@ -40,12 +44,19 @@ lazy val root = project.in(file(".")).
     publishArtifact := false
   )
 
-lazy val protobufRuntimeScala = crossProject.in(file("."))
+lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file("."))
   .settings(
-    name := "protobuf-runtime-scala",
+    name := "protobuf-runtime-scala"
+  )
+  .platformsSettings(JSPlatform, JVMPlatform)(
     libraryDependencies ++= Seq(
       "org.scalatest" %%% "scalatest" % "3.0.3" % "test"
     )
+  )
+  .nativeSettings(
+    // disable native test https://github.com/scalatest/scalatest/issues/1112
+    sources in Test := Nil,
+    test := {}
   )
   .jvmSettings(
     // Add JVM-specific settings here
@@ -61,3 +72,4 @@ lazy val protobufRuntimeScala = crossProject.in(file("."))
   
 lazy val runtimeJS = protobufRuntimeScala.js
 lazy val runtimeJVM = protobufRuntimeScala.jvm
+lazy val runtimeNative = protobufRuntimeScala.native
