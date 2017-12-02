@@ -4,7 +4,7 @@ scalaVersion in ThisBuild := "2.11.8"
 
 crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.8", "2.12.1", "2.13.0-M1")
 
-organization in ThisBuild := "com.trueaccord.scalapb"
+organization in ThisBuild := "com.thesamet.scalapb"
 
 scalacOptions in ThisBuild ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
