@@ -46,17 +46,10 @@ lazy val root = project.in(file(".")).
 
 lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file("."))
   .settings(
-    name := "protobuf-runtime-scala"
-  )
-  .platformsSettings(JSPlatform, JVMPlatform)(
+    name := "protobuf-runtime-scala",
     libraryDependencies ++= Seq(
-      "org.scalatest" %%% "scalatest" % "3.0.3" % "test"
+      "com.lihaoyi" %%% "utest" % "0.6.3" % "test"
     )
-  )
-  .nativeSettings(
-    // disable native test https://github.com/scalatest/scalatest/issues/1112
-    sources in Test := Nil,
-    test := {}
   )
   .jvmSettings(
     // Add JVM-specific settings here
@@ -69,7 +62,12 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
       s"-P:scalajs:mapSourceURI:$a->$g/"
     }
   )
+  .nativeSettings(
+    nativeLinkStubs := true // for utest
+  )
   
+testFrameworks in ThisBuild += new TestFramework("utest.runner.Framework")
+
 lazy val runtimeJS = protobufRuntimeScala.js
 lazy val runtimeJVM = protobufRuntimeScala.jvm
 lazy val runtimeNative = protobufRuntimeScala.native
