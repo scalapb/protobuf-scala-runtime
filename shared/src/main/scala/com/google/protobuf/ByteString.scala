@@ -89,7 +89,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     * @throws IndexOutOfBoundsException if an offset or size is negative or too
     *                                   large
     */
-  def copyTo(target: Array[Byte], sourceOffset: Int, targetOffset: Int, numberToCopy: Int) {
+  def copyTo(target: Array[Byte], sourceOffset: Int, targetOffset: Int, numberToCopy: Int): Unit = {
     if (sourceOffset < 0) {
       throw new IndexOutOfBoundsException("Source offset < 0: " + sourceOffset)
     }
@@ -186,11 +186,11 @@ object ByteString {
   class Output(initialSize: Int = 16) extends OutputStream {
     private val bytes = new mutable.ArrayBuffer[Byte](initialSize)
     
-    override def write(b: Int) {
+    override def write(b: Int): Unit = {
       bytes += b.toByte
     }
 
-    override def write(b: Array[Byte], offset: Int, len: Int) {
+    override def write(b: Array[Byte], offset: Int, len: Int): Unit = {
       bytes ++= b.slice(offset, offset + len)
     }
 

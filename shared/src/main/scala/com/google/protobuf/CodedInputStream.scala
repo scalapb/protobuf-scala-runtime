@@ -110,7 +110,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     * more bytes from the input if necessary to make it so.  Caller must ensure
     * that the requested space is less than BUFFER_SIZE.
     */
-  private def ensureAvailable(n: Int) {
+  private def ensureAvailable(n: Int): Unit = {
     if (bufferSize - bufferPos < n) {
       refillBuffer(n)
     }
@@ -121,7 +121,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     * in the buffer.  Caller must ensure that the requested space is not yet
     * available, and that the requested space is less than BUFFER_SIZE.
     */
-  private def refillBuffer(n: Int) {
+  private def refillBuffer(n: Int): Unit = {
     if (!tryRefillBuffer(n)) {
       throw InvalidProtocolBufferException.truncatedMessage
     }
@@ -224,7 +224,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     *
     * @param oldLimit The old limit, as returned by { @code pushLimit}.
     */
-  def popLimit(oldLimit: Int) {
+  def popLimit(oldLimit: Int): Unit = {
     currentLimit = oldLimit
     recomputeBufferSizeAfterLimit
   }
@@ -277,7 +277,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   /**
     * Reads and discards {@code size} bytes.
     */
-  def skipRawBytes(size: Int) {
+  def skipRawBytes(size: Int): Unit = {
     if (size <= (bufferSize - bufferPos) && size >= 0) {
       bufferPos += size
     }
@@ -379,7 +379,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   }
 
   @throws(classOf[IOException])
-  private def skipRawVarintSlowPath {
+  private def skipRawVarintSlowPath: Unit = {
     var i: Int = 0
     while (i < 10) {
       if (readRawByte() >= 0) {
@@ -394,7 +394,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     * Exactly like skipRawBytes, but caller must have already checked the fast
     * path: (size <= (bufferSize - pos) && size >= 0)
     */
-  private def skipRawBytesSlowPath(size: Int) {
+  private def skipRawBytesSlowPath(size: Int): Unit = {
     if (size < 0) {
       throw InvalidProtocolBufferException.negativeSize
     }

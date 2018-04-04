@@ -9,6 +9,10 @@ scalaVersion in ThisBuild := Scala211
 
 organization in ThisBuild := "com.thesamet.scalapb"
 
+scalacOptions in ThisBuild ++= Seq(
+  "-Xfuture"
+)
+
 scalacOptions in ThisBuild ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v <= 11 => List("-target:jvm-1.7")
