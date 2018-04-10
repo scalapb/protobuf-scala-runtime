@@ -36,11 +36,11 @@ object CodedOutputStream {
 
   private class ByteBufferOutputStream(private val byteBuffer: ByteBuffer) extends OutputStream {
 
-    override def write(b: Int) {
+    override def write(b: Int): Unit = {
       byteBuffer.put(b.toByte)
     }
 
-    override def write(data: Array[Byte], offset: Int, length: Int) {
+    override def write(data: Array[Byte], offset: Int, length: Int): Unit = {
       byteBuffer.put(data, offset, length)
     }
   }
@@ -211,7 +211,7 @@ object CodedOutputStream {
 }
 
 class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
-  private def refreshBuffer() {
+  private def refreshBuffer(): Unit = {
     if (output == null) {
       throw new OutOfSpaceException()
     }
@@ -219,7 +219,7 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     position = 0
   }
 
-  def flush() {
+  def flush(): Unit = {
     if (output != null) {
       refreshBuffer()
     }
@@ -234,7 +234,7 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     }
   }
 
-  def checkNoSpaceLeft() {
+  def checkNoSpaceLeft(): Unit = {
     if (spaceLeft() != 0) {
       throw new IllegalStateException("Did not write as much data as expected.")
     }
@@ -245,57 +245,57 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
 
   private var totalBytesWritten: Int = 0
 
-  def writeDouble(fieldNumber: Int, value: Double) {
+  def writeDouble(fieldNumber: Int, value: Double): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_FIXED64)
     writeDoubleNoTag(value)
   }
 
-  def writeFloat(fieldNumber: Int, value: Float) {
+  def writeFloat(fieldNumber: Int, value: Float): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_FIXED32)
     writeFloatNoTag(value)
   }
 
-  def writeUInt64(fieldNumber: Int, value: Long) {
+  def writeUInt64(fieldNumber: Int, value: Long): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeUInt64NoTag(value)
   }
 
-  def writeInt64(fieldNumber: Int, value: Long) {
+  def writeInt64(fieldNumber: Int, value: Long): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeInt64NoTag(value)
   }
 
-  def writeInt32(fieldNumber: Int, value: Int) {
+  def writeInt32(fieldNumber: Int, value: Int): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeInt32NoTag(value)
   }
 
-  def writeFixed64(fieldNumber: Int, value: Long) {
+  def writeFixed64(fieldNumber: Int, value: Long): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_FIXED64)
     writeFixed64NoTag(value)
   }
 
-  def writeFixed32(fieldNumber: Int, value: Int) {
+  def writeFixed32(fieldNumber: Int, value: Int): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_FIXED32)
     writeFixed32NoTag(value)
   }
 
-  def writeBool(fieldNumber: Int, value: Boolean) {
+  def writeBool(fieldNumber: Int, value: Boolean): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeBoolNoTag(value)
   }
 
-  def writeString(fieldNumber: Int, value: String) {
+  def writeString(fieldNumber: Int, value: String): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_LENGTH_DELIMITED)
     writeStringNoTag(value)
   }
 
-  def writeBytes(fieldNumber: Int, value: ByteString) {
+  def writeBytes(fieldNumber: Int, value: ByteString): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_LENGTH_DELIMITED)
     writeBytesNoTag(value)
   }
 
-  def writeByteArray(fieldNumber: Int, value: Array[Byte]) {
+  def writeByteArray(fieldNumber: Int, value: Array[Byte]): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_LENGTH_DELIMITED)
     writeByteArrayNoTag(value)
   }
@@ -303,63 +303,63 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
   def writeByteArray(fieldNumber: Int,
       value: Array[Byte],
       offset: Int,
-      length: Int) {
+      length: Int): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_LENGTH_DELIMITED)
     writeByteArrayNoTag(value, offset, length)
   }
 
-  def writeByteBuffer(fieldNumber: Int, value: ByteBuffer) {
+  def writeByteBuffer(fieldNumber: Int, value: ByteBuffer): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_LENGTH_DELIMITED)
     writeByteBufferNoTag(value)
   }
 
-  def writeUInt32(fieldNumber: Int, value: Int) {
+  def writeUInt32(fieldNumber: Int, value: Int): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeUInt32NoTag(value)
   }
 
-  def writeEnum(fieldNumber: Int, value: Int) {
+  def writeEnum(fieldNumber: Int, value: Int): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeEnumNoTag(value)
   }
 
-  def writeSFixed32(fieldNumber: Int, value: Int) {
+  def writeSFixed32(fieldNumber: Int, value: Int): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_FIXED32)
     writeSFixed32NoTag(value)
   }
 
-  def writeSFixed64(fieldNumber: Int, value: Long) {
+  def writeSFixed64(fieldNumber: Int, value: Long): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_FIXED64)
     writeSFixed64NoTag(value)
   }
 
-  def writeSInt32(fieldNumber: Int, value: Int) {
+  def writeSInt32(fieldNumber: Int, value: Int): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeSInt32NoTag(value)
   }
 
-  def writeSInt64(fieldNumber: Int, value: Long) {
+  def writeSInt64(fieldNumber: Int, value: Long): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_VARINT)
     writeSInt64NoTag(value)
   }
 
-  def writeDoubleNoTag(value: Double) {
+  def writeDoubleNoTag(value: Double): Unit = {
     writeRawLittleEndian64(java.lang.Double.doubleToLongBits(value))
   }
 
-  def writeFloatNoTag(value: Float) {
+  def writeFloatNoTag(value: Float): Unit = {
     writeRawLittleEndian32(java.lang.Float.floatToIntBits(value))
   }
 
-  def writeUInt64NoTag(value: Long) {
+  def writeUInt64NoTag(value: Long): Unit = {
     writeRawVarint64(value)
   }
 
-  def writeInt64NoTag(value: Long) {
+  def writeInt64NoTag(value: Long): Unit = {
     writeRawVarint64(value)
   }
 
-  def writeInt32NoTag(value: Int) {
+  def writeInt32NoTag(value: Int): Unit = {
     if (value >= 0) {
       writeRawVarint32(value)
     } else {
@@ -367,29 +367,29 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     }
   }
 
-  def writeFixed64NoTag(value: Long) {
+  def writeFixed64NoTag(value: Long): Unit = {
     writeRawLittleEndian64(value)
   }
 
-  def writeFixed32NoTag(value: Int) {
+  def writeFixed32NoTag(value: Int): Unit = {
     writeRawLittleEndian32(value)
   }
 
-  def writeBoolNoTag(value: Boolean) {
+  def writeBoolNoTag(value: Boolean): Unit = {
     writeRawByte(if (value) 1 else 0)
   }
 
-  def writeStringNoTag(value: String) {
+  def writeStringNoTag(value: String): Unit = {
     val bytes = value.getBytes(Internal.UTF_8)
     writeRawVarint32(bytes.length)
     writeRawBytes(bytes)
   }
 
-  def writeTag(fieldNumber: Int, wireType: Int) {
+  def writeTag(fieldNumber: Int, wireType: Int): Unit = {
     writeRawVarint32(WireFormat.makeTag(fieldNumber, wireType))
   }
 
-  def writeRawVarint32(value0: Int) {
+  def writeRawVarint32(value0: Int): Unit = {
     var value = value0
     while (true) {
       if ((value & ~0x7F) == 0) {
@@ -402,7 +402,7 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     }
   }
 
-  def writeRawVarint64(value0: Long) {
+  def writeRawVarint64(value0: Long): Unit = {
     var value = value0
     while (true) {
       if ((value & ~0x7FL) == 0) {
@@ -415,14 +415,14 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     }
   }
 
-  def writeRawLittleEndian32(value: Int) {
+  def writeRawLittleEndian32(value: Int): Unit = {
     writeRawByte((value) & 0xFF)
     writeRawByte((value >> 8) & 0xFF)
     writeRawByte((value >> 16) & 0xFF)
     writeRawByte((value >> 24) & 0xFF)
   }
 
-  def writeRawLittleEndian64(value: Long) {
+  def writeRawLittleEndian64(value: Long): Unit = {
     writeRawByte((value).toInt & 0xFF)
     writeRawByte((value >> 8).toInt & 0xFF)
     writeRawByte((value >> 16).toInt & 0xFF)
@@ -433,47 +433,47 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     writeRawByte((value >> 56).toInt & 0xFF)
   }
 
-  def writeBytesNoTag(value: ByteString) {
+  def writeBytesNoTag(value: ByteString): Unit = {
     writeRawVarint32(value.size)
     writeRawBytes(value)
   }
 
-  def writeByteArrayNoTag(value: Array[Byte]) {
+  def writeByteArrayNoTag(value: Array[Byte]): Unit = {
     writeRawVarint32(value.length)
     writeRawBytes(value)
   }
 
-  def writeByteArrayNoTag(value: Array[Byte], offset: Int, length: Int) {
+  def writeByteArrayNoTag(value: Array[Byte], offset: Int, length: Int): Unit = {
     writeRawVarint32(length)
     writeRawBytes(value, offset, length)
   }
 
-  def writeByteBufferNoTag(value: ByteBuffer) {
+  def writeByteBufferNoTag(value: ByteBuffer): Unit = {
     writeRawVarint32(value.capacity())
     writeRawBytes(value)
   }
 
-  def writeUInt32NoTag(value: Int) {
+  def writeUInt32NoTag(value: Int): Unit = {
     writeRawVarint32(value)
   }
 
-  def writeEnumNoTag(value: Int) {
+  def writeEnumNoTag(value: Int): Unit = {
     writeInt32NoTag(value)
   }
 
-  def writeSFixed32NoTag(value: Int) {
+  def writeSFixed32NoTag(value: Int): Unit = {
     writeRawLittleEndian32(value)
   }
 
-  def writeSFixed64NoTag(value: Long) {
+  def writeSFixed64NoTag(value: Long): Unit = {
     writeRawLittleEndian64(value)
   }
 
-  def writeSInt32NoTag(value: Int) {
+  def writeSInt32NoTag(value: Int): Unit = {
     writeRawVarint32(encodeZigZag32(value))
   }
 
-  def writeSInt64NoTag(value: Long) {
+  def writeSInt64NoTag(value: Long): Unit = {
     writeRawVarint64(encodeZigZag64(value))
   }
 
@@ -485,11 +485,11 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     position += 1
   }
 
-  def writeRawByte(value: Int) {
+  def writeRawByte(value: Int): Unit = {
     writeRawByte(value.toByte)
   }
 
-  def writeRawBytes(value: ByteString) {
+  def writeRawBytes(value: ByteString): Unit = {
     var offset = 0
     var length = value.size
     if (limit - position >= length) {
@@ -520,11 +520,11 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     }
   }
 
-  def writeRawBytes(value: Array[Byte]) {
+  def writeRawBytes(value: Array[Byte]): Unit = {
     writeRawBytes(value, 0, value.length)
   }
 
-  def writeRawBytes(value: ByteBuffer) {
+  def writeRawBytes(value: ByteBuffer): Unit = {
     if (value.hasArray()) {
       writeRawBytes(value.array(), value.arrayOffset(), value.capacity())
     } else {
@@ -534,7 +534,7 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     }
   }
 
-  private def writeRawBytesInternal(value: ByteBuffer) {
+  private def writeRawBytesInternal(value: ByteBuffer): Unit = {
     var length = value.remaining()
     if (limit - position >= length) {
       value.get(buffer, position, length)
@@ -559,7 +559,7 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     }
   }
 
-  def writeRawBytes(value: Array[Byte], offset0: Int, length0: Int) {
+  def writeRawBytes(value: Array[Byte], offset0: Int, length0: Int): Unit = {
     var offset = offset0
     var length = length0
     if (limit - position >= length) {
