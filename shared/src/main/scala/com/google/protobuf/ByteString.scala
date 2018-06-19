@@ -5,11 +5,10 @@ import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 
-import scala.collection.generic.CanBuildFrom
 import scala.collection._
 
 class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
-  extends IndexedSeq[Byte] with IndexedSeqOptimized[Byte, ByteString] {
+  extends ByteStringParent {
 
   val bytes = bytesIn
 
@@ -30,9 +29,6 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     }
     h
   }
-
-  override protected[this] def newBuilder: mutable.Builder[Byte, ByteString] =
-    ByteString.newBuilder
 
   def apply(i: Int): Byte =
     if (i < 0 || i >= start + len) throw new IndexOutOfBoundsException(i.toString)
@@ -150,18 +146,16 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
   }
 }
 
-object ByteString {
+object ByteString extends ByteStringCompanionParent {
+
+  def empty: com.google.protobuf.ByteString =
+    EMPTY
+
   def newBuilder: mutable.Builder[Byte, ByteString] =
     Vector.newBuilder[Byte].mapResult {
       v: Vector[Byte] =>
         val r = new Array[Byte](v.size)
         new ByteString(v.toArray, 0, v.size)
-    }
-
-  implicit def canBuildFrom: CanBuildFrom[ByteString, Byte, ByteString] =
-    new CanBuildFrom[ByteString, Byte, ByteString] {
-      def apply(from: ByteString): mutable.Builder[Byte, ByteString] = newBuilder
-      def apply(): mutable.Builder[Byte, ByteString] = newBuilder
     }
 
   def copyFrom(bytes: Array[Byte], offset: Int, size: Int) = {
