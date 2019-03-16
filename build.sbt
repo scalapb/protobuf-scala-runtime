@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala211 = "2.11.12"
 
-crossScalaVersions in ThisBuild := Seq("2.10.7", Scala211, "2.12.6", "2.13.0-M5")
+crossScalaVersions in ThisBuild := Seq("2.10.7", Scala211, "2.12.8", "2.13.0-M5")
 
 scalaVersion in ThisBuild := Scala211
 
@@ -40,6 +40,8 @@ releaseProcess := Seq[ReleaseStep](
   pushChanges
 )
 
+publishTo in ThisBuild := sonatypePublishTo.value
+
 lazy val root = project.in(file(".")).
   aggregate(runtimeJS, runtimeJVM).
   settings(
@@ -71,7 +73,8 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
     // Add JS-specific settings here
     scalacOptions += {
       val a = (baseDirectory in LocalRootProject).value.toURI.toString
-      val g = "https://raw.githubusercontent.com/scalapb/protobuf-scala-runtime/" + sys.process.Process("git rev-parse HEAD").lines_!.head
+      val g =
+      "https://raw.githubusercontent.com/scalapb/protobuf-scala-runtime/" + sys.process.Process("git rev-parse HEAD").lineStream_!.head
       s"-P:scalajs:mapSourceURI:$a->$g/"
     }
   )
