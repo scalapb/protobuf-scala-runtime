@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala211 = "2.11.12"
 
-crossScalaVersions in ThisBuild := Seq("2.10.7", Scala211, "2.12.8", "2.13.0-M5")
+crossScalaVersions in ThisBuild := Seq("2.10.7", Scala211, "2.12.8", "2.13.0-RC1")
 
 scalaVersion in ThisBuild := Scala211
 
@@ -54,7 +54,7 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
   .settings(
     name := "protobuf-runtime-scala",
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %%% "utest" % "0.6.6" % "test"
+      "com.lihaoyi" %%% "utest" % "0.6.7" % "test"
     ),
     unmanagedSourceDirectories in Compile += {
       val base = (baseDirectory in LocalRootProject).value / "shared" / "src" / "main"

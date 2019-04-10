@@ -11,4 +11,5 @@ abstract class ByteStringParent extends AbstractSeq[Byte]
     ByteString.fromSpecific(coll)
   override def newSpecificBuilder: collection.mutable.Builder[Byte, ByteString] =
     ByteString.newBuilder
+  override def empty: ByteString = ByteString.empty
 }
