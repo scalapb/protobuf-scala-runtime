@@ -61,10 +61,15 @@ object Descriptors {
     }
   }
 
+  class ServiceDescriptor {
+  }
+
   class FileDescriptor {
     def getMessageTypes(): java.util.List[Descriptor] = ???
 
     def getEnumTypes(): java.util.List[EnumDescriptor] = ???
+
+    def getServices(): java.util.List[ServiceDescriptor] = ???
   }
 
   object FileDescriptor {
