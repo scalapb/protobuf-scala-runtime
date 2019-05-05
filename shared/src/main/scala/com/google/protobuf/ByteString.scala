@@ -128,6 +128,11 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
 
   def toStringUtf8(): String = toString(Internal.UTF_8)
 
+  def concat(other: ByteString): ByteString = {
+    val ba = toByteArray() ++ other
+    new ByteString(ba, 0, ba.length)
+  }
+
   /**
    * Constructs a new {@code String} by decoding the bytes using the
    * specified charset. Returns the same empty String if empty.
