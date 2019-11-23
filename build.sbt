@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala211 = "2.11.12"
 
-crossScalaVersions in ThisBuild := Seq("2.10.7", Scala211, "2.12.8", "2.13.0")
+crossScalaVersions in ThisBuild := Seq("2.10.7", Scala211, "2.12.8", "2.13.1")
 
 scalaVersion in ThisBuild := Scala211
 
