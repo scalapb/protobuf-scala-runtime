@@ -446,6 +446,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
+  def readStringRequireUtf8(): String = readString()
+
   def checkLastTagWas(value: Int): Unit = {
     if (lastTag != value) {
       throw InvalidProtocolBufferException.invalidEndTag();
