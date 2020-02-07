@@ -3,7 +3,9 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala211 = "2.11.12"
 
-crossScalaVersions in ThisBuild := Seq("2.10.7", Scala211, "2.12.8", "2.13.1")
+val Scala212 = "2.12.10"
+
+val Scala213 = "2.13.1"
 
 scalaVersion in ThisBuild := Scala211
 
@@ -55,9 +57,9 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
     libraryDependencies ++= {
       val v = CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, v)) if v >= 12 =>
-          "0.6.9"
+          "0.7.4"
         case _ =>
-          "0.6.8"
+          "0.7.3"
       }
       Seq(
         "com.lihaoyi" %%% "utest" % v % "test"
@@ -75,9 +77,11 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
   )
   .jvmSettings(
     // Add JVM-specific settings here
+    crossScalaVersions in ThisBuild := Seq(Scala212, Scala213)
   )
   .jsSettings(
     // Add JS-specific settings here
+    crossScalaVersions in ThisBuild := Seq(Scala212, Scala213),
     scalacOptions += {
       val a = (baseDirectory in LocalRootProject).value.toURI.toString
       val g =
@@ -86,6 +90,7 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
     }
   )
   .nativeSettings(
+    scalaVersion := Scala211,
     nativeLinkStubs := true // for utest
   )
   
