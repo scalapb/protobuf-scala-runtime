@@ -4,37 +4,37 @@ import com.google.protobuf.DescriptorProtos._
 
 object Descriptors {
   class EnumValueDescriptor {
-    def getName(): String = ???
+    def getName(): String = throw new NotImplementedError("EnumValueDescriptor.getName not implemented")
 
-    def getNumber(): Int = ???
+    def getNumber(): Int = throw new NotImplementedError("EnumValueDescriptor.getNumber not implemented")
   }
 
   class EnumDescriptor {
-    def getName(): String = ???
+    def getName(): String = throw new NotImplementedError("EnumDescriptor.getName not implemented")
 
-    def getContainingType(): Descriptor = ???
+    def getContainingType(): Descriptor = throw new NotImplementedError("EnumDescriptor.getContainingType not implemented")
 
-    def getValues(): java.util.List[EnumValueDescriptor] = ???
+    def getValues(): java.util.List[EnumValueDescriptor] = throw new NotImplementedError("EnumDescriptor.getValues not implemented")
 
-    def findValueByName(name: String): EnumValueDescriptor = ???
+    def findValueByName(name: String): EnumValueDescriptor = throw new NotImplementedError("EnumDescriptor.findValueByName not implemented")
 
-    def findValueByNumber(number: Int): EnumValueDescriptor = ???
+    def findValueByNumber(number: Int): EnumValueDescriptor = throw new NotImplementedError("EnumDescriptor.findValueByNumber not implemented")
   }
 
   class FieldDescriptor {
-    def getName(): String = ???
+    def getName(): String = throw new NotImplementedError("FieldDescriptor.getName not implemented")
 
-    def getContainingType(): Descriptor = ???
+    def getContainingType(): Descriptor = throw new NotImplementedError("FieldDescriptor.getContainingType not implemented")
 
-    def getNumber(): Int = ???
+    def getNumber(): Int = throw new NotImplementedError("FieldDescriptor.getNumber not implemented")
 
-    def getType(): FieldDescriptor.Type = ???
+    def getType(): FieldDescriptor.Type = throw new NotImplementedError("FieldDescriptor.getType not implemented")
 
-    def isOptional(): Boolean = ???
+    def isOptional(): Boolean = throw new NotImplementedError("FieldDescriptor.isOptional not implemented")
 
-    def isRepeated(): Boolean = ???
+    def isRepeated(): Boolean = throw new NotImplementedError("FieldDescriptor.isRepeated not implemented")
 
-    def isRequired(): Boolean = ???
+    def isRequired(): Boolean = throw new NotImplementedError("FieldDescriptor.isRequired not implemented")
   }
 
   object FieldDescriptor {
@@ -61,30 +61,35 @@ object Descriptors {
     }
   }
 
+  class MethodDescriptor {}
+
   class ServiceDescriptor {
+    def getMethods: java.util.List[MethodDescriptor] = {
+      java.util.Arrays.asList(new MethodDescriptor)
+    }
   }
 
   class FileDescriptor {
-    def getMessageTypes(): java.util.List[Descriptor] = ???
+    def getMessageTypes(): java.util.List[Descriptor] = throw new NotImplementedError("FileDescriptor.getMessageTypes not implemented")
 
-    def getEnumTypes(): java.util.List[EnumDescriptor] = ???
+    def getEnumTypes(): java.util.List[EnumDescriptor] = throw new NotImplementedError("FileDescriptor.getEnumTypes not implemented")
 
-    def getServices(): java.util.List[ServiceDescriptor] = ???
+    def getServices(): java.util.List[ServiceDescriptor] = java.util.Arrays.asList(new ServiceDescriptor)
   }
 
   object FileDescriptor {
-    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = ???
+    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = new FileDescriptor
   }
 
   class Descriptor {
-    def getContainingType(): Descriptor = ???
+    def getContainingType(): Descriptor = throw new NotImplementedError("Descriptor.getContainingType not implemented")
 
-    def getFields(): java.util.List[FieldDescriptor] = ???
+    def getFields(): java.util.List[FieldDescriptor] = throw new NotImplementedError("Descriptor.getFields not implemented")
 
-    def getNestedTypes(): java.util.List[Descriptor] = ???
+    def getNestedTypes(): java.util.List[Descriptor] = throw new NotImplementedError("Descriptor.getNestedTypes not implemented")
 
-    def getEnumTypes(): java.util.List[EnumDescriptor] = ???
+    def getEnumTypes(): java.util.List[EnumDescriptor] = throw new NotImplementedError("Descriptor.getEnumTypes not implemented")
 
-    def getFullName(): String = ???
+    def getFullName(): String = throw new NotImplementedError("Descriptor.getFullName not implemented")
   }
 }

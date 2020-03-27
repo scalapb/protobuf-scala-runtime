@@ -1,13 +1,13 @@
 import ReleaseTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-val Scala211 = "2.11.12"
+//val Scala211 = "2.11.12"
 
 val Scala212 = "2.12.10"
 
 val Scala213 = "2.13.1"
 
-scalaVersion in ThisBuild := Scala211
+scalaVersion in ThisBuild := Scala212
 
 organization in ThisBuild := "com.thesamet.scalapb"
 
@@ -34,7 +34,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  releaseStepCommandAndRemaining(s"+publishSigned;++${Scala211};protobufRuntimeScalaNative/publishSigned"),
+  //releaseStepCommandAndRemaining(s"+publishSigned;++${Scala211};protobufRuntimeScalaNative/publishSigned"),
   releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
@@ -90,7 +90,7 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
     }
   )
   .nativeSettings(
-    scalaVersion := Scala211,
+  //  scalaVersion := Scala211,
     nativeLinkStubs := true // for utest
   )
   

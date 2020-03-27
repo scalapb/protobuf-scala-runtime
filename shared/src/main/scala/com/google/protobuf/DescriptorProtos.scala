@@ -4,10 +4,10 @@ object DescriptorProtos {
   class FileDescriptorProto
 
   object FileDescriptorProto {
-    def parseFrom(b: Array[Byte]): FileDescriptorProto = ???
+    def parseFrom(b: Array[Byte]): FileDescriptorProto = new FileDescriptorProto
   }
 
-  def getDescriptor(): com.google.protobuf.Descriptors.FileDescriptor = ???
+  def getDescriptor(): com.google.protobuf.Descriptors.FileDescriptor = throw new NotImplementedError("DescriptorProtos.getDescriptor not implemented")
 
   class FileOptions extends Message with GeneratedMessageV3.ExtendableMessage[FileOptions]
   class MessageOptions extends Message with GeneratedMessageV3.ExtendableMessage[MessageOptions]
@@ -17,4 +17,3 @@ object DescriptorProtos {
   class ServiceOptions extends Message with GeneratedMessageV3.ExtendableMessage[ServiceOptions]
   class MethodOptions extends Message with GeneratedMessageV3.ExtendableMessage[MethodOptions]
 }
-
