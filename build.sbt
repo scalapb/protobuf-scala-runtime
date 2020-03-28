@@ -7,7 +7,7 @@ val Scala212 = "2.12.10"
 
 val Scala213 = "2.13.1"
 
-scalaVersion in ThisBuild := Scala211
+scalaVersion in ThisBuild := Scala212
 
 organization in ThisBuild := "com.thesamet.scalapb"
 
@@ -55,14 +55,8 @@ lazy val protobufRuntimeScala = crossProject(JSPlatform, JVMPlatform, NativePlat
   .settings(
     name := "protobuf-runtime-scala",
     libraryDependencies ++= {
-      val v = CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, v)) if v >= 12 =>
-          "0.7.4"
-        case _ =>
-          "0.7.3"
-      }
       Seq(
-        "com.lihaoyi" %%% "utest" % v % "test"
+        "com.lihaoyi" %%% "utest" % "0.7.4" % "test"
       ),
     },
     unmanagedSourceDirectories in Compile += {

@@ -62,6 +62,14 @@ object Descriptors {
   }
 
   class ServiceDescriptor {
+    class MethodDescriptorList {
+      def get(i: Int): MethodDescriptor = new MethodDescriptor()
+    }
+
+    def getMethods(): MethodDescriptorList = new MethodDescriptorList
+  }
+
+  class MethodDescriptor {
   }
 
   class FileDescriptor {
@@ -69,11 +77,15 @@ object Descriptors {
 
     def getEnumTypes(): java.util.List[EnumDescriptor] = ???
 
-    def getServices(): java.util.List[ServiceDescriptor] = ???
+    class ServiceDescriptorList() {
+      def get(i: Int): ServiceDescriptor = new ServiceDescriptor()
+    }
+
+    def getServices(): ServiceDescriptorList = new ServiceDescriptorList()
   }
 
   object FileDescriptor {
-    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = ???
+    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = new FileDescriptor
   }
 
   class Descriptor {
