@@ -63,22 +63,31 @@ object Descriptors {
 
   class MethodDescriptor {}
 
-  class ServiceDescriptor {
+  private val DefaultNumberOfServices = 100
+  private val DefaultNumberOfMethods = 100
+
+  class ServiceDescriptor(methodsAvailable: Int) {
     def getMethods: java.util.List[MethodDescriptor] = {
-      java.util.Arrays.asList(new MethodDescriptor)
+      // TODO: Detect the number of available services to remove the hardcoded service list.
+      java.util.Arrays.asList(List.fill(DefaultNumberOfMethods)(new MethodDescriptor): _*)
     }
   }
 
-  class FileDescriptor {
+  class FileDescriptor(numberOfServices: Int) {
     def getMessageTypes(): java.util.List[Descriptor] = throw new NotImplementedError("FileDescriptor.getMessageTypes not implemented")
 
     def getEnumTypes(): java.util.List[EnumDescriptor] = throw new NotImplementedError("FileDescriptor.getEnumTypes not implemented")
 
-    def getServices(): java.util.List[ServiceDescriptor] = java.util.Arrays.asList(new ServiceDescriptor)
+    def getServices(): java.util.List[ServiceDescriptor] = {
+      java.util.Arrays.asList(List.fill(numberOfServices)(new ServiceDescriptor(DefaultNumberOfServices)): _*)
+    }
   }
 
   object FileDescriptor {
-    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = new FileDescriptor
+    // TODO: Detect the number of available services to remove the hardcoded service list.
+    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = {
+      new FileDescriptor(DefaultNumberOfServices)
+    }
   }
 
   class Descriptor {
