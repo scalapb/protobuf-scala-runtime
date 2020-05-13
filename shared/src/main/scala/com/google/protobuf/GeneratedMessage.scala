@@ -4,8 +4,7 @@ trait Message {
   def getUnknownFields(): UnknownFieldSet = ???
 }
 
-trait GeneratedMessage extends Message {
-}
+trait GeneratedMessage extends Message {}
 
 object GeneratedMessage {
   trait ExtendableMessage[S]
@@ -20,4 +19,3 @@ object UnknownFieldSet {
     def getLengthDelimitedList(): java.util.List[ByteString] = ???
   }
 }
-

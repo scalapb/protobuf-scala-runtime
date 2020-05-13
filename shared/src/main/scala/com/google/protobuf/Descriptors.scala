@@ -69,8 +69,7 @@ object Descriptors {
     def getMethods(): MethodDescriptorList = new MethodDescriptorList
   }
 
-  class MethodDescriptor {
-  }
+  class MethodDescriptor {}
 
   class FileDescriptor {
     def getMessageTypes(): java.util.List[Descriptor] = ???
@@ -85,7 +84,10 @@ object Descriptors {
   }
 
   object FileDescriptor {
-    def buildFrom(p: FileDescriptorProto, deps: Array[FileDescriptor]): FileDescriptor = new FileDescriptor
+    def buildFrom(
+        p: FileDescriptorProto,
+        deps: Array[FileDescriptor]
+    ): FileDescriptor = new FileDescriptor
   }
 
   class Descriptor {

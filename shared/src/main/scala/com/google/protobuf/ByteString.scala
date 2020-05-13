@@ -8,7 +8,7 @@ import java.nio.charset.UnsupportedCharsetException
 import scala.collection._
 
 class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
-  extends ByteStringParent {
+    extends ByteStringParent {
 
   val bytes = bytesIn
 
@@ -31,7 +31,8 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
   }
 
   def apply(i: Int): Byte =
-    if (i < 0 || i >= start + len) throw new IndexOutOfBoundsException(i.toString)
+    if (i < 0 || i >= start + len)
+      throw new IndexOutOfBoundsException(i.toString)
     else bytes(start + i)
 
   override def slice(from: Int, until: Int): ByteString = {
@@ -43,19 +44,18 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
   override def equals(that: Any): Boolean = {
     that match {
       case other: ByteString =>
-        other.eq(this) || (
-          (length == other.length) && (
-            length == 0 || (
-              equalsRange(other))))
+        other.eq(
+          this
+        ) || ((length == other.length) && (length == 0 || (equalsRange(other))))
       case _ => false
     }
   }
 
   override def hashCode() = hash
 
-/**
-  * Check equality of the content of two ByteStrings.
-  */
+  /**
+    * Check equality of the content of two ByteStrings.
+    */
   private def equalsRange(other: ByteString): Boolean =
     other.length == length && {
       var thisIndex = start
@@ -85,7 +85,12 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     * @throws IndexOutOfBoundsException if an offset or size is negative or too
     *                                   large
     */
-  def copyTo(target: Array[Byte], sourceOffset: Int, targetOffset: Int, numberToCopy: Int): Unit = {
+  def copyTo(
+      target: Array[Byte],
+      sourceOffset: Int,
+      targetOffset: Int,
+      numberToCopy: Int
+  ): Unit = {
     if (sourceOffset < 0) {
       throw new IndexOutOfBoundsException("Source offset < 0: " + sourceOffset)
     }
@@ -96,19 +101,30 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
       throw new IndexOutOfBoundsException("Length < 0: " + numberToCopy)
     }
     if (sourceOffset + numberToCopy > size) {
-      throw new IndexOutOfBoundsException("Source end offset < 0: " + (sourceOffset + numberToCopy))
+      throw new IndexOutOfBoundsException(
+        "Source end offset < 0: " + (sourceOffset + numberToCopy)
+      )
     }
     if (targetOffset + numberToCopy > target.length) {
-      throw new IndexOutOfBoundsException("Target end offset < 0: " + (targetOffset + numberToCopy))
+      throw new IndexOutOfBoundsException(
+        "Target end offset < 0: " + (targetOffset + numberToCopy)
+      )
     }
     if (numberToCopy > 0) {
-      System.arraycopy(bytes, start + sourceOffset, target, targetOffset, numberToCopy);
+      System.arraycopy(
+        bytes,
+        start + sourceOffset,
+        target,
+        targetOffset,
+        numberToCopy
+      );
     }
   }
 
   def newCodedInput(): CodedInputStream = CodedInputStream.newInstance(bytes)
 
-  def newInput(): java.io.InputStream = new java.io.ByteArrayInputStream(bytes, start, len)
+  def newInput(): java.io.InputStream =
+    new java.io.ByteArrayInputStream(bytes, start, len)
 
   private def toStringInternal(charset: Charset) = {
     new String(bytes, start, len, charset)
@@ -134,12 +150,12 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
   }
 
   /**
-   * Constructs a new {@code String} by decoding the bytes using the
-   * specified charset. Returns the same empty String if empty.
-   *
+    * Constructs a new {@code String} by decoding the bytes using the
+    * specified charset. Returns the same empty String if empty.
+    *
    * @param charset encode using this charset
-   * @return new string
-   */
+    * @return new string
+    */
   def toString(charset: Charset): String = {
     if (isEmpty) "" else toStringInternal(charset)
   }
@@ -157,10 +173,9 @@ object ByteString extends ByteStringCompanionParent {
     EMPTY
 
   def newBuilder: mutable.Builder[Byte, ByteString] =
-    Vector.newBuilder[Byte].mapResult {
-      v: Vector[Byte] =>
-        val r = new Array[Byte](v.size)
-        new ByteString(v.toArray, 0, v.size)
+    Vector.newBuilder[Byte].mapResult { v: Vector[Byte] =>
+      val r = new Array[Byte](v.size)
+      new ByteString(v.toArray, 0, v.size)
     }
 
   def copyFrom(bytes: Array[Byte], offset: Int, size: Int) = {
@@ -169,9 +184,11 @@ object ByteString extends ByteStringCompanionParent {
     new ByteString(copy, 0, size)
   }
 
-  def copyFrom(bytes: Array[Byte]): ByteString = copyFrom(bytes, 0, bytes.length)
+  def copyFrom(bytes: Array[Byte]): ByteString =
+    copyFrom(bytes, 0, bytes.length)
 
-  def copyFromUtf8(text: String): ByteString = copyFrom(text.getBytes(Internal.UTF_8))
+  def copyFromUtf8(text: String): ByteString =
+    copyFrom(text.getBytes(Internal.UTF_8))
 
   private[protobuf] def useBuffer(bytes: Array[Byte]) =
     new ByteString(bytes, 0, bytes.length)
@@ -184,7 +201,7 @@ object ByteString extends ByteStringCompanionParent {
 
   class Output(initialSize: Int = 16) extends OutputStream {
     private val bytes = new mutable.ArrayBuffer[Byte](initialSize)
-    
+
     override def write(b: Int): Unit = {
       bytes += b.toByte
     }

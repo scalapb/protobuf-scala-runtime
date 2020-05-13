@@ -5,6 +5,10 @@ scala:
     - 2.12.10
     - 2.13.1
 
+script:
+- sbt ++$TRAVIS_SCALA_VERSION test
+- sbt scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
+
 matrix:
   include:
   - env: SCALA_NATIVE

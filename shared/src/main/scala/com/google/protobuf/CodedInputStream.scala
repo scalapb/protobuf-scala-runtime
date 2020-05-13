@@ -9,9 +9,11 @@ import scala.collection.mutable
 
 object CodedInputStream {
 
-  def newInstance(input: InputStream): CodedInputStream = new CodedInputStream(input)
+  def newInstance(input: InputStream): CodedInputStream =
+    new CodedInputStream(input)
 
-  def newInstance(buf: Array[Byte]): CodedInputStream = newInstance(buf, 0, buf.length)
+  def newInstance(buf: Array[Byte]): CodedInputStream =
+    newInstance(buf, 0, buf.length)
 
   def newInstance(buf: Array[Byte], off: Int, len: Int): CodedInputStream = {
     val result = new CodedInputStream(buf, off, len)
@@ -70,6 +72,7 @@ object CodedInputStream {
 }
 
 class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
+
   /**
     * The total number of bytes read before the current buffer.  The total
     * bytes read up to the current position can be computed as
@@ -126,6 +129,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       throw InvalidProtocolBufferException.truncatedMessage
     }
   }
+
   /**
     * Tries to read more bytes from the input, making at least {@code n} bytes
     * available in the buffer.  Caller must ensure that the requested space is
@@ -137,7 +141,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   private def tryRefillBuffer(n: Int): Boolean = {
     if (bufferPos + n <= bufferSize) {
       throw new IllegalStateException(
-        s"refillBuffer() called when $n bytes were already available in buffer")
+        s"refillBuffer() called when $n bytes were already available in buffer"
+      )
     }
     if (totalBytesRetired + bufferPos + n > currentLimit) false
     else if (input != null) {
@@ -150,9 +155,12 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         bufferSize -= pos
         bufferPos = 0
       }
-      val bytesRead: Int = input.read(buffer, bufferSize, buffer.length - bufferSize)
+      val bytesRead: Int =
+        input.read(buffer, bufferSize, buffer.length - bufferSize)
       if (bytesRead == 0 || bytesRead < -1 || bytesRead > buffer.length) {
-        throw new IllegalStateException("InputStream#read(byte[]) returned invalid result: " + bytesRead + "\nThe InputStream implementation is buggy.")
+        throw new IllegalStateException(
+          "InputStream#read(byte[]) returned invalid result: " + bytesRead + "\nThe InputStream implementation is buggy."
+        )
       }
       if (bytesRead > 0) {
         bufferSize += bytesRead
@@ -172,8 +180,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     if (bufferEnd > currentLimit) {
       bufferSizeAfterLimit = bufferEnd - currentLimit
       bufferSize -= bufferSizeAfterLimit
-    }
-    else {
+    } else {
       bufferSizeAfterLimit = 0
     }
   }
@@ -249,7 +256,12 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         true
       case WireFormat.WIRETYPE_START_GROUP =>
         skipMessage()
-        checkLastTagWas(WireFormat.makeTag(WireFormat.getTagFieldNumber(tag), WireFormat.WIRETYPE_END_GROUP))
+        checkLastTagWas(
+          WireFormat.makeTag(
+            WireFormat.getTagFieldNumber(tag),
+            WireFormat.WIRETYPE_END_GROUP
+          )
+        )
         true
       case WireFormat.WIRETYPE_END_GROUP =>
         false
@@ -280,8 +292,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   def skipRawBytes(size: Int): Unit = {
     if (size <= (bufferSize - bufferPos) && size >= 0) {
       bufferPos += size
-    }
-    else {
+    } else {
       skipRawBytesSlowPath(size)
     }
   }
@@ -299,55 +310,60 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       }
       val buffer: Array[Byte] = this.buffer
       var x: Int = 0
-      if ((({
-        x = buffer(({
-          pos += 1; pos - 1
-        })); x
-      })) >= 0) {
+      if (
+        (({
+          x = buffer(({
+            pos += 1; pos - 1
+          })); x
+        })) >= 0
+      ) {
         bufferPos = pos
         return x
-      }
-      else if (bufferSize - pos < 9) {
+      } else if (bufferSize - pos < 9) {
         return readRawVarint64SlowPath().toInt
-      }
-      else if ((({
-        x ^= (buffer(({
-          pos += 1; pos - 1
-        })) << 7); x
-      })) < 0) {
+      } else if (
+        (({
+          x ^= (buffer(({
+            pos += 1; pos - 1
+          })) << 7); x
+        })) < 0
+      ) {
         x ^= (~0 << 7)
-      }
-      else if ((({
-        x ^= (buffer(({
-          pos += 1; pos - 1
-        })) << 14); x
-      })) >= 0) {
+      } else if (
+        (({
+          x ^= (buffer(({
+            pos += 1; pos - 1
+          })) << 14); x
+        })) >= 0
+      ) {
         x ^= (~0 << 7) ^ (~0 << 14)
-      }
-      else if ((({
-        x ^= (buffer(({
-          pos += 1; pos - 1
-        })) << 21); x
-      })) < 0) {
+      } else if (
+        (({
+          x ^= (buffer(({
+            pos += 1; pos - 1
+          })) << 21); x
+        })) < 0
+      ) {
         x ^= (~0 << 7) ^ (~0 << 14) ^ (~0 << 21)
-      }
-      else {
+      } else {
         val y: Int = buffer(({
           pos += 1; pos - 1
         }))
         x ^= y << 28
         x ^= (~0 << 7) ^ (~0 << 14) ^ (~0 << 21) ^ (~0 << 28)
-        if (y < 0 && buffer(({
-          pos += 1; pos - 1
-        })) < 0 && buffer(({
-          pos += 1; pos - 1
-        })) < 0 && buffer(({
-          pos += 1; pos - 1
-        })) < 0 && buffer(({
-          pos += 1; pos - 1
-        })) < 0 && buffer(({
-          pos += 1; pos - 1
-        })) < 0) {
+        if (
+          y < 0 && buffer(({
+            pos += 1; pos - 1
+          })) < 0 && buffer(({
+            pos += 1; pos - 1
+          })) < 0 && buffer(({
+            pos += 1; pos - 1
+          })) < 0 && buffer(({
+            pos += 1; pos - 1
+          })) < 0 && buffer(({
+            pos += 1; pos - 1
+          })) < 0
+        ) {
           return readRawVarint64SlowPath().toInt
         }
       }
@@ -363,9 +379,11 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       var i: Int = 0
       while (i < 10) {
         {
-          if (buffer(({
-            pos += 1; pos - 1
-          })) >= 0) {
+          if (
+            buffer(({
+              pos += 1; pos - 1
+            })) >= 0
+          ) {
             bufferPos = pos
             return
           }
@@ -437,11 +455,9 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       val result: String = new String(buffer, bufferPos, size, Internal.UTF_8)
       bufferPos += size
       return result
-    }
-    else if (size == 0) {
+    } else if (size == 0) {
       return ""
-    }
-    else {
+    } else {
       return new String(readRawBytesSlowPath(size), Internal.UTF_8)
     }
   }
@@ -539,82 +555,91 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   /** Read a raw Varint from the stream. */
   @throws[InvalidProtocolBufferException]
   def readRawVarint64(): Long = {
-      var pos: Int = bufferPos
-      if (bufferSize == pos) {
-        return readRawVarint64SlowPath()
-      }
+    var pos: Int = bufferPos
+    if (bufferSize == pos) {
+      return readRawVarint64SlowPath()
+    }
     val buffer: Array[Byte] = this.buffer
     var x: Long = 0L
     var y: Int = 0
-    if ((({
-      y = buffer(({
-        pos += 1; pos - 1
-      })); y
-    })) >= 0) {
+    if (
+      (({
+        y = buffer(({
+          pos += 1; pos - 1
+        })); y
+      })) >= 0
+    ) {
       bufferPos = pos
       return y
-    }
-    else if (bufferSize - pos < 9) {
+    } else if (bufferSize - pos < 9) {
       return readRawVarint64SlowPath()
-    }
-    else if ((({
-      y ^= (buffer(({
-        pos += 1; pos - 1
-      })) << 7); y
-    })) < 0) {
+    } else if (
+      (({
+        y ^= (buffer(({
+          pos += 1; pos - 1
+        })) << 7); y
+      })) < 0
+    ) {
       x = y ^ (~0 << 7)
-    }
-    else if ((({
-      y ^= (buffer(({
-        pos += 1; pos - 1
-      })) << 14); y
-    })) >= 0) {
+    } else if (
+      (({
+        y ^= (buffer(({
+          pos += 1; pos - 1
+        })) << 14); y
+      })) >= 0
+    ) {
       x = y ^ ((~0 << 7) ^ (~0 << 14))
-    }
-    else if ((({
-      y ^= (buffer(({
-        pos += 1; pos - 1
-      })) << 21); y
-    })) < 0) {
+    } else if (
+      (({
+        y ^= (buffer(({
+          pos += 1; pos - 1
+        })) << 21); y
+      })) < 0
+    ) {
       x = y ^ ((~0 << 7) ^ (~0 << 14) ^ (~0 << 21))
-    }
-    else if ((({
-      x = (y.toLong) ^ (buffer(({
-        pos += 1; pos - 1
-      })).toLong << 28); x
-    })) >= 0L) {
+    } else if (
+      (({
+        x = (y.toLong) ^ (buffer(({
+          pos += 1; pos - 1
+        })).toLong << 28); x
+      })) >= 0L
+    ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28)
-    }
-    else if ((({
-      x ^= (buffer(({
-        pos += 1; pos - 1
-      })).toLong << 35); x
-    })) < 0L) {
+    } else if (
+      (({
+        x ^= (buffer(({
+          pos += 1; pos - 1
+        })).toLong << 35); x
+      })) < 0L
+    ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28) ^ (~0L << 35)
-    }
-    else if ((({
-      x ^= (buffer(({
-        pos += 1; pos - 1
-      })).toLong << 42); x
-    })) >= 0L) {
+    } else if (
+      (({
+        x ^= (buffer(({
+          pos += 1; pos - 1
+        })).toLong << 42); x
+      })) >= 0L
+    ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28) ^ (~0L << 35) ^ (~0L << 42)
-    }
-    else if ((({
-      x ^= (buffer(({
-        pos += 1; pos - 1
-      })).toLong << 49); x
-    })) < 0L) {
+    } else if (
+      (({
+        x ^= (buffer(({
+          pos += 1; pos - 1
+        })).toLong << 49); x
+      })) < 0L
+    ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28) ^ (~0L << 35) ^ (~0L << 42) ^ (~0L << 49)
-    }
-    else {
+    } else {
       x ^= (buffer(({
         pos += 1; pos - 1
       })).toLong << 56)
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28) ^ (~0L << 35) ^ (~0L << 42) ^ (~0L << 49) ^ (~0L << 56)
       if (x < 0L) {
-        if (buffer(({
-          pos += 1; pos - 1
-        })) < 0L) {
+        if (
+          buffer(({
+            pos += 1; pos - 1
+          })) < 0L
+        ) {
           return readRawVarint64SlowPath()
         }
       }
@@ -630,7 +655,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     var shift: Int = 0
     while (shift < 64) {
       val b: Byte = readRawByte
-      result |= (b & 0x7F).toLong << shift
+      result |= (b & 0x7f).toLong << shift
       if ((b & 0x80) == 0) {
         return result
       }
@@ -695,8 +720,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     if (size <= (bufferSize - pos) && size > 0) {
       bufferPos = pos + size
       Arrays.copyOfRange(buffer, pos, pos + size)
-    }
-    else {
+    } else {
       readRawBytesSlowPath(size)
     }
   }
@@ -709,8 +733,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     if (size <= 0) {
       if (size == 0) {
         return Internal.EMPTY_BYTE_ARRAY
-      }
-      else {
+      } else {
         throw InvalidProtocolBufferException.negativeSize
       }
     }
@@ -727,20 +750,23 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       System.arraycopy(buffer, 0, bytes, pos, size - pos)
       bufferPos = size - pos
       bytes
-    }
-    else {
+    } else {
       val originalBufferPos: Int = bufferPos
       val originalBufferSize: Int = bufferSize
       totalBytesRetired += bufferSize
       bufferPos = 0
       bufferSize = 0
       var sizeLeft: Int = size - (originalBufferSize - originalBufferPos)
-      val chunks: mutable.ArrayBuffer[Array[Byte]] = new mutable.ArrayBuffer[Array[Byte]]
+      val chunks: mutable.ArrayBuffer[Array[Byte]] =
+        new mutable.ArrayBuffer[Array[Byte]]
       while (sizeLeft > 0) {
-        val chunk: Array[Byte] = new Array[Byte](Math.min(sizeLeft, BUFFER_SIZE))
+        val chunk: Array[Byte] =
+          new Array[Byte](Math.min(sizeLeft, BUFFER_SIZE))
         var pos: Int = 0
         while (pos < chunk.length) {
-          val n: Int = if ((input == null)) -1 else input.read(chunk, pos, chunk.length - pos)
+          val n: Int =
+            if ((input == null)) -1
+            else input.read(chunk, pos, chunk.length - pos)
           if (n == -1) {
             throw InvalidProtocolBufferException.truncatedMessage
           }
@@ -748,7 +774,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
           pos += n
         }
         sizeLeft -= chunk.length
-        chunks+=(chunk)
+        chunks += (chunk)
       }
       val bytes: Array[Byte] = new Array[Byte](size)
       var pos: Int = originalBufferSize - originalBufferPos
@@ -769,11 +795,9 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       val result: ByteString = ByteString.copyFrom(buffer, bufferPos, size)
       bufferPos += size
       result
-    }
-    else if (size == 0) {
+    } else if (size == 0) {
       ByteString.EMPTY
-    }
-    else {
+    } else {
       ByteString.useBuffer(readRawBytesSlowPath(size));
     }
   }
@@ -791,7 +815,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   def setSizeLimit(limit: Int): Int = {
     if (limit < 0) {
       throw new IllegalArgumentException(
-        "Size limit cannot be negative: " + limit)
+        "Size limit cannot be negative: " + limit
+      )
     }
     val oldLimit: Int = sizeLimit
     sizeLimit = limit

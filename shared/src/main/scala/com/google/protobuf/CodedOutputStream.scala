@@ -30,11 +30,15 @@ object CodedOutputStream {
     new CodedOutputStream(null, b)
   }
 
-  def newInstance(byteBuffer: ByteBuffer, bufferSize: Int): CodedOutputStream = {
+  def newInstance(
+      byteBuffer: ByteBuffer,
+      bufferSize: Int
+  ): CodedOutputStream = {
     newInstance(new ByteBufferOutputStream(byteBuffer), bufferSize)
   }
 
-  private class ByteBufferOutputStream(private val byteBuffer: ByteBuffer) extends OutputStream {
+  private class ByteBufferOutputStream(private val byteBuffer: ByteBuffer)
+      extends OutputStream {
 
     override def write(b: Int): Unit = {
       byteBuffer.put(b.toByte)
@@ -173,8 +177,11 @@ object CodedOutputStream {
   }
 
   @SerialVersionUID(-6947486886997889499L)
-  class OutOfSpaceException() extends IOException("CodedOutputStream was writing to a flat byte array and ran " +
-    "out of space.")
+  class OutOfSpaceException()
+      extends IOException(
+        "CodedOutputStream was writing to a flat byte array and ran " +
+          "out of space."
+      )
 
   def computeTagSize(fieldNumber: Int): Int = {
     computeRawVarint32Size(WireFormat.makeTag(fieldNumber, 0))
@@ -210,7 +217,7 @@ object CodedOutputStream {
   def encodeZigZag64(n: Long): Long = (n << 1) ^ (n >> 63)
 }
 
-class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
+class CodedOutputStream(output: OutputStream, buffer: Array[Byte]) {
   private def refreshBuffer(): Unit = {
     if (output == null) {
       throw new OutOfSpaceException()
@@ -229,8 +236,10 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     if (output == null) {
       limit - position
     } else {
-      throw new UnsupportedOperationException("spaceLeft() can only be called on CodedOutputStreams that are " +
-        "writing to a flat array.")
+      throw new UnsupportedOperationException(
+        "spaceLeft() can only be called on CodedOutputStreams that are " +
+          "writing to a flat array."
+      )
     }
   }
 
@@ -300,10 +309,12 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     writeByteArrayNoTag(value)
   }
 
-  def writeByteArray(fieldNumber: Int,
+  def writeByteArray(
+      fieldNumber: Int,
       value: Array[Byte],
       offset: Int,
-      length: Int): Unit = {
+      length: Int
+  ): Unit = {
     writeTag(fieldNumber, WireFormat.WIRETYPE_LENGTH_DELIMITED)
     writeByteArrayNoTag(value, offset, length)
   }
@@ -392,11 +403,11 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
   def writeRawVarint32(value0: Int): Unit = {
     var value = value0
     while (true) {
-      if ((value & ~0x7F) == 0) {
+      if ((value & ~0x7f) == 0) {
         writeRawByte(value)
         return
       } else {
-        writeRawByte((value & 0x7F) | 0x80)
+        writeRawByte((value & 0x7f) | 0x80)
         value >>>= 7
       }
     }
@@ -405,32 +416,32 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
   def writeRawVarint64(value0: Long): Unit = {
     var value = value0
     while (true) {
-      if ((value & ~0x7FL) == 0) {
+      if ((value & ~0x7fL) == 0) {
         writeRawByte(value.toInt)
         return
       } else {
-        writeRawByte((value.toInt & 0x7F) | 0x80)
+        writeRawByte((value.toInt & 0x7f) | 0x80)
         value >>>= 7
       }
     }
   }
 
   def writeRawLittleEndian32(value: Int): Unit = {
-    writeRawByte((value) & 0xFF)
-    writeRawByte((value >> 8) & 0xFF)
-    writeRawByte((value >> 16) & 0xFF)
-    writeRawByte((value >> 24) & 0xFF)
+    writeRawByte((value) & 0xff)
+    writeRawByte((value >> 8) & 0xff)
+    writeRawByte((value >> 16) & 0xff)
+    writeRawByte((value >> 24) & 0xff)
   }
 
   def writeRawLittleEndian64(value: Long): Unit = {
-    writeRawByte((value).toInt & 0xFF)
-    writeRawByte((value >> 8).toInt & 0xFF)
-    writeRawByte((value >> 16).toInt & 0xFF)
-    writeRawByte((value >> 24).toInt & 0xFF)
-    writeRawByte((value >> 32).toInt & 0xFF)
-    writeRawByte((value >> 40).toInt & 0xFF)
-    writeRawByte((value >> 48).toInt & 0xFF)
-    writeRawByte((value >> 56).toInt & 0xFF)
+    writeRawByte((value).toInt & 0xff)
+    writeRawByte((value >> 8).toInt & 0xff)
+    writeRawByte((value >> 16).toInt & 0xff)
+    writeRawByte((value >> 24).toInt & 0xff)
+    writeRawByte((value >> 32).toInt & 0xff)
+    writeRawByte((value >> 40).toInt & 0xff)
+    writeRawByte((value >> 48).toInt & 0xff)
+    writeRawByte((value >> 56).toInt & 0xff)
   }
 
   def writeBytesNoTag(value: ByteString): Unit = {
@@ -443,7 +454,11 @@ class CodedOutputStream (output: OutputStream, buffer: Array[Byte]) {
     writeRawBytes(value)
   }
 
-  def writeByteArrayNoTag(value: Array[Byte], offset: Int, length: Int): Unit = {
+  def writeByteArrayNoTag(
+      value: Array[Byte],
+      offset: Int,
+      length: Int
+  ): Unit = {
     writeRawVarint32(length)
     writeRawBytes(value, offset, length)
   }
