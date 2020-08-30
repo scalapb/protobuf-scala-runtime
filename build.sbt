@@ -61,7 +61,7 @@ lazy val protobufRuntimeScala =
       name := "protobuf-runtime-scala",
       libraryDependencies ++= {
         Seq(
-          "com.lihaoyi" %%% "utest" % "0.7.4" % "test"
+          "com.lihaoyi" %%% "utest" % "0.7.5" % "test"
         ),
       },
       unmanagedSourceDirectories in Compile += {
