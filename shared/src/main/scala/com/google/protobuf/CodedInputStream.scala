@@ -73,8 +73,7 @@ object CodedInputStream {
 
 class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
-  /**
-    * The total number of bytes read before the current buffer.  The total
+  /** The total number of bytes read before the current buffer.  The total
     * bytes read up to the current position can be computed as
     * {@code totalBytesRetired + bufferPos}.  This value may be negative if
     * reading started in the middle of the current buffer (e.g. if the
@@ -108,8 +107,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     totalBytesRetired = 0
   }
 
-  /**
-    * Ensures that at least {@code n} bytes are available in the buffer, reading
+  /** Ensures that at least {@code n} bytes are available in the buffer, reading
     * more bytes from the input if necessary to make it so.  Caller must ensure
     * that the requested space is less than BUFFER_SIZE.
     */
@@ -119,8 +117,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /**
-    * Reads more bytes from the input, making at least {@code n} bytes available
+  /** Reads more bytes from the input, making at least {@code n} bytes available
     * in the buffer.  Caller must ensure that the requested space is not yet
     * available, and that the requested space is less than BUFFER_SIZE.
     */
@@ -130,8 +127,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /**
-    * Tries to read more bytes from the input, making at least {@code n} bytes
+  /** Tries to read more bytes from the input, making at least {@code n} bytes
     * available in the buffer.  Caller must ensure that the requested space is
     * not yet available, and that the requested space is less than BUFFER_SIZE.
     *
@@ -185,8 +181,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /**
-    * Returns true if the stream has reached the end of the input.  This is the
+  /** Returns true if the stream has reached the end of the input.  This is the
     * case if either the end of the underlying input source has been reached or
     * if the stream has reached a limit created using {@link #pushLimit(int)}.
     */
@@ -198,8 +193,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     totalBytesRetired + bufferPos
   }
 
-  /**
-    * Sets {@code currentLimit} to (current position) + {@code byteLimit}.  This
+  /** Sets {@code currentLimit} to (current position) + {@code byteLimit}.  This
     * is called when descending into a length-delimited embedded message.
     *
     * <p>Note that {@code pushLimit()} does NOT affect how many bytes the
@@ -226,8 +220,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     oldLimit
   }
 
-  /**
-    * Discards the current limit, returning to the previous limit.
+  /** Discards the current limit, returning to the previous limit.
     *
     * @param oldLimit The old limit, as returned by { @code pushLimit}.
     */
@@ -236,8 +229,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     recomputeBufferSizeAfterLimit
   }
 
-  /**
-    * Reads and discards a single field, given its tag value.
+  /** Reads and discards a single field, given its tag value.
     *
     * @return { @code false} if the tag is an endgroup tag, in which case
     *                 nothing is skipped.  Otherwise, returns { @code true}.
@@ -273,8 +265,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /**
-    * Reads and discards an entire message.  This will read either until EOF
+  /** Reads and discards an entire message.  This will read either until EOF
     * or until an endgroup tag, whichever comes first.
     */
   def skipMessage(): Unit = {
@@ -286,8 +277,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /**
-    * Reads and discards {@code size} bytes.
+  /** Reads and discards {@code size} bytes.
     */
   def skipRawBytes(size: Int): Unit = {
     if (size <= (bufferSize - bufferPos) && size >= 0) {
@@ -297,8 +287,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /**
-    * Read a raw Varint from the stream.  If larger than 32 bits, discard the
+  /** Read a raw Varint from the stream.  If larger than 32 bits, discard the
     * upper bits.
     */
   @throws[InvalidProtocolBufferException]
@@ -408,8 +397,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     throw InvalidProtocolBufferException.malformedVarint
   }
 
-  /**
-    * Exactly like skipRawBytes, but caller must have already checked the fast
+  /** Exactly like skipRawBytes, but caller must have already checked the fast
     * path: (size <= (bufferSize - pos) && size >= 0)
     */
   private def skipRawBytesSlowPath(size: Int): Unit = {
@@ -431,8 +419,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     bufferPos = size - pos
   }
 
-  /**
-    * Attempt to read a field tag, returning zero if we have reached EOF.
+  /** Attempt to read a field tag, returning zero if we have reached EOF.
     * Protocol message parsers use this to read tags, since a protocol message
     * may legally end wherever a tag occurs, and zero is not a valid tag number.
     */
@@ -519,8 +506,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     readRawVarint32()
   }
 
-  /**
-    * Read an enum field value from the stream.  Caller is responsible
+  /** Read an enum field value from the stream.  Caller is responsible
     * for converting the numeric value to an actual enum.
     */
   def readEnum(): Int = {
@@ -698,8 +684,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       ((buffer(pos + 7).toLong & 0xffL) << 56))
   }
 
-  /**
-    * Read one byte from the input.
+  /** Read one byte from the input.
     */
   @throws[InvalidProtocolBufferException]
   def readRawByte(): Byte = {
@@ -711,8 +696,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     })
   }
 
-  /**
-    * Read a fixed size of bytes from the input.
+  /** Read a fixed size of bytes from the input.
     */
   @throws[InvalidProtocolBufferException]
   def readRawBytes(size: Int): Array[Byte] = {
@@ -725,8 +709,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /**
-    * Exactly like readRawBytes, but caller must have already checked the fast
+  /** Exactly like readRawBytes, but caller must have already checked the fast
     * path: (size <= (bufferSize - pos) && size > 0)
     */
   private def readRawBytesSlowPath(size: Int): Array[Byte] = {

@@ -53,8 +53,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
 
   override def hashCode() = hash
 
-  /**
-    * Check equality of the content of two ByteStrings.
+  /** Check equality of the content of two ByteStrings.
     */
   private def equalsRange(other: ByteString): Boolean =
     other.length == length && {
@@ -75,8 +74,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     out.write(bytes, start, len)
   }
 
-  /**
-    * Copies bytes into a buffer.
+  /** Copies bytes into a buffer.
     *
     * @param target       buffer to copy into
     * @param sourceOffset offset within these bytes
@@ -149,11 +147,10 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     new ByteString(ba, 0, ba.length)
   }
 
-  /**
-    * Constructs a new {@code String} by decoding the bytes using the
+  /** Constructs a new {@code String} by decoding the bytes using the
     * specified charset. Returns the same empty String if empty.
     *
-   * @param charset encode using this charset
+    * @param charset encode using this charset
     * @return new string
     */
   def toString(charset: Charset): String = {
