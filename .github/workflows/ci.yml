@@ -30,7 +30,7 @@ jobs:
         set -e
         sbt ++${{matrix.scala}} test
         sbt scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
-    - name: Install tools for Native
+    - name: Test native
       if: ${{matrix.scala == '2.11.7' }}
       shell: bash
       run: |
