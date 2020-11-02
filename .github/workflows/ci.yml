@@ -1,0 +1,46 @@
+name: CI
+
+on: [push, pull_request]
+
+
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        scala: [2.11.7, 2.12.10, 2.13.1]
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: olafurpg/setup-scala@v5
+      with:
+        java-version: 11
+    - name: Mount caches
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.sbt
+          ~/.ivy2/cache
+          ~/.cache/coursier
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/*.sbt') }}
+    - name: Compile and test
+      shell: bash
+      run: |
+        set -e
+        sbt ++${{matrix.scala}} test
+        sbt scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
+    - name: Install tools for Native
+      if: ${{matrix.scala == '2.11.7' }}
+      shell: bash
+      run: |
+        set -e
+        ./ci_setup.sh
+        sbt protobufRuntimeScalaNative/test
+
+  # Single final job for mergify.
+  ci-passed:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - run: ':'
