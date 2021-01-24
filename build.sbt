@@ -3,9 +3,9 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala211 = "2.11.12"
 
-val Scala212 = "2.12.10"
+val Scala212 = "2.12.13"
 
-val Scala213 = "2.13.1"
+val Scala213 = "2.13.4"
 
 scalaVersion in ThisBuild := Scala212
 
@@ -35,7 +35,7 @@ releaseProcess := Seq[ReleaseStep](
   commitReleaseVersion,
   tagRelease,
   releaseStepCommandAndRemaining(
-    s"+publishSigned;++${Scala211};protobufRuntimeScalaNative/publishSigned"
+    s"+publishSigned;+protobufRuntimeScalaNative/publishSigned"
   ),
   releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
@@ -61,7 +61,7 @@ lazy val protobufRuntimeScala =
       name := "protobuf-runtime-scala",
       libraryDependencies ++= {
         Seq(
-          "com.lihaoyi" %%% "utest" % "0.7.5" % "test"
+          "com.lihaoyi" %%% "utest" % "0.7.7" % "test"
         ),
       },
       unmanagedSourceDirectories in Compile += {
@@ -73,15 +73,14 @@ lazy val protobufRuntimeScala =
           case _ =>
             base / s"scala-2.13-"
         }
-      }
+      },
+      crossScalaVersions in ThisBuild := Seq(Scala211, Scala212, Scala213)
     )
     .jvmSettings(
       // Add JVM-specific settings here
-      crossScalaVersions in ThisBuild := Seq(Scala212, Scala213)
     )
     .jsSettings(
       // Add JS-specific settings here
-      crossScalaVersions in ThisBuild := Seq(Scala212, Scala213),
       scalacOptions += {
         val a = (baseDirectory in LocalRootProject).value.toURI.toString
         val g =
@@ -93,7 +92,6 @@ lazy val protobufRuntimeScala =
       }
     )
     .nativeSettings(
-      scalaVersion := Scala211,
       nativeLinkStubs := true // for utest
     )
 

@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        scala: [2.11.7, 2.12.10, 2.13.1]
+        scala: [2.11.12, 2.12.13, 2.13.4]
 
     steps:
     - uses: actions/checkout@v1
@@ -31,12 +31,9 @@ jobs:
         sbt ++${{matrix.scala}} test
         sbt scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
     - name: Test native
-      if: ${{matrix.scala == '2.11.7' }}
       shell: bash
       run: |
-        set -e
-        ./ci_setup.sh
-        sbt protobufRuntimeScalaNative/test
+        sbt ++${{matrix.scala}} "+ protobufRuntimeScalaNative/test"
 
   # Single final job for mergify.
   ci-passed:
