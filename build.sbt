@@ -1,13 +1,13 @@
 import ReleaseTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-val Scala211 = "2.11.12"
+val Scala212 = "2.12.13"
 
-val Scala212 = "2.12.10"
-
-val Scala213 = "2.13.1"
+val Scala213 = "2.13.4"
 
 scalaVersion in ThisBuild := Scala212
+
+crossScalaVersions in ThisBuild := Seq(Scala212, Scala213)
 
 organization in ThisBuild := "com.thesamet.scalapb"
 
@@ -34,9 +34,6 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  releaseStepCommandAndRemaining(
-    s"+publishSigned;++${Scala211};protobufRuntimeScalaNative/publishSigned"
-  ),
   releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
@@ -47,7 +44,7 @@ publishTo in ThisBuild := sonatypePublishToBundle.value
 
 lazy val root = project
   .in(file("."))
-  .aggregate(runtimeJS, runtimeJVM)
+  .aggregate(runtimeJS, runtimeJVM, runtimeNative)
   .settings(
     publish := {},
     publishLocal := {},
@@ -61,8 +58,8 @@ lazy val protobufRuntimeScala =
       name := "protobuf-runtime-scala",
       libraryDependencies ++= {
         Seq(
-          "com.lihaoyi" %%% "utest" % "0.7.5" % "test"
-        ),
+          "com.lihaoyi" %%% "utest" % "0.7.7" % "test"
+        )
       },
       unmanagedSourceDirectories in Compile += {
         val base =
@@ -77,11 +74,9 @@ lazy val protobufRuntimeScala =
     )
     .jvmSettings(
       // Add JVM-specific settings here
-      crossScalaVersions in ThisBuild := Seq(Scala212, Scala213)
     )
     .jsSettings(
       // Add JS-specific settings here
-      crossScalaVersions in ThisBuild := Seq(Scala212, Scala213),
       scalacOptions += {
         val a = (baseDirectory in LocalRootProject).value.toURI.toString
         val g =
@@ -93,12 +88,11 @@ lazy val protobufRuntimeScala =
       }
     )
     .nativeSettings(
-      scalaVersion := Scala211,
       nativeLinkStubs := true // for utest
     )
 
 testFrameworks in ThisBuild += new TestFramework("utest.runner.Framework")
 
-lazy val runtimeJS = protobufRuntimeScala.js
-lazy val runtimeJVM = protobufRuntimeScala.jvm
+lazy val runtimeJS     = protobufRuntimeScala.js
+lazy val runtimeJVM    = protobufRuntimeScala.jvm
 lazy val runtimeNative = protobufRuntimeScala.native
