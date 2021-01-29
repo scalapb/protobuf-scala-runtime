@@ -94,6 +94,6 @@ lazy val protobufRuntimeScala =
 
 testFrameworks in ThisBuild += new TestFramework("utest.runner.Framework")
 
-lazy val runtimeJS     = protobufRuntimeScala.js
-lazy val runtimeJVM    = protobufRuntimeScala.jvm
+lazy val runtimeJS = protobufRuntimeScala.js
+lazy val runtimeJVM = protobufRuntimeScala.jvm
 lazy val runtimeNative = protobufRuntimeScala.native
