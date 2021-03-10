@@ -87,8 +87,10 @@ lazy val protobufRuntimeScala =
               .Process("git rev-parse HEAD")
               .lineStream_!
               .head
-          val flagPrefix = if (version == 3) "-" else "-P:"
-          List(s"${flagPrefix}scalajs:mapSourceURI:$a->$g/")
+          val flag =
+            if (version == 3) "-scalajs-mapSourceURI"
+            else "-P:scalajs:mapSourceURI"
+          List(s"$flag:$a->$g/")
         case _ => Nil
       })
     )
