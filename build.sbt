@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala212 = "2.12.13"
 val Scala213 = "2.13.5"
-val Scala300 = "3.0.0-RC3"
+val Scala300 = "3.0.0"
 
 val versionsBase = Seq(Scala212, Scala213)
 val versionsJVM = versionsBase :+ Scala300
@@ -58,7 +58,7 @@ lazy val protobufRuntimeScala =
     .settings(
       name := "protobuf-runtime-scala",
       libraryDependencies ++= Seq(
-        "com.lihaoyi" %%% "utest" % "0.7.9" % "test"
+        "com.lihaoyi" %%% "utest" % "0.7.10" % "test"
       ),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((3, _))            => List("-source:3.0-migration")
