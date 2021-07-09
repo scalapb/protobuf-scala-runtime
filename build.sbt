@@ -2,8 +2,8 @@ import ReleaseTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala212 = "2.12.13"
-val Scala213 = "2.13.6"
-val Scala300 = "3.0.0"
+val Scala213 = "2.13.5"
+val Scala300 = "3.0.1"
 
 val versionsBase = Seq(Scala212, Scala213)
 val versionsJVM = versionsBase :+ Scala300
