@@ -73,11 +73,11 @@ object CodedInputStream {
 
 class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
-  /** The total number of bytes read before the current buffer.  The total
-    * bytes read up to the current position can be computed as
-    * {@code totalBytesRetired + bufferPos}.  This value may be negative if
-    * reading started in the middle of the current buffer (e.g. if the
-    * constructor that takes a byte array and an offset was used).
+  /** The total number of bytes read before the current buffer. The total bytes
+    * read up to the current position can be computed as {@code
+    * totalBytesRetired + bufferPos}. This value may be negative if reading
+    * started in the middle of the current buffer (e.g. if the constructor that
+    * takes a byte array and an offset was used).
     */
   private var totalBytesRetired: Int = 0
 
@@ -108,7 +108,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   }
 
   /** Ensures that at least {@code n} bytes are available in the buffer, reading
-    * more bytes from the input if necessary to make it so.  Caller must ensure
+    * more bytes from the input if necessary to make it so. Caller must ensure
     * that the requested space is less than BUFFER_SIZE.
     */
   private def ensureAvailable(n: Int): Unit = {
@@ -118,7 +118,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   }
 
   /** Reads more bytes from the input, making at least {@code n} bytes available
-    * in the buffer.  Caller must ensure that the requested space is not yet
+    * in the buffer. Caller must ensure that the requested space is not yet
     * available, and that the requested space is less than BUFFER_SIZE.
     */
   private def refillBuffer(n: Int): Unit = {
@@ -128,11 +128,12 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   }
 
   /** Tries to read more bytes from the input, making at least {@code n} bytes
-    * available in the buffer.  Caller must ensure that the requested space is
+    * available in the buffer. Caller must ensure that the requested space is
     * not yet available, and that the requested space is less than BUFFER_SIZE.
     *
-    * @return { @code true} if the bytes could be made available; { @code false}
-    *                                                                     if the end of the stream or the current limit was reached.
+    * @return
+    *   { @code true} if the bytes could be made available; { @code false} if
+    *   the end of the stream or the current limit was reached.
     */
   private def tryRefillBuffer(n: Int): Boolean = {
     if (bufferPos + n <= bufferSize) {
@@ -181,7 +182,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /** Returns true if the stream has reached the end of the input.  This is the
+  /** Returns true if the stream has reached the end of the input. This is the
     * case if either the end of the underlying input source has been reached or
     * if the stream has reached a limit created using {@link #pushLimit(int)}.
     */
@@ -193,18 +194,19 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     totalBytesRetired + bufferPos
   }
 
-  /** Sets {@code currentLimit} to (current position) + {@code byteLimit}.  This
+  /** Sets {@code currentLimit} to (current position) + {@code byteLimit}. This
     * is called when descending into a length-delimited embedded message.
     *
-    * <p>Note that {@code pushLimit()} does NOT affect how many bytes the
-    * {@code CodedInputStream} reads from an underlying {@code InputStream} when
-    * refreshing its buffer.  If you need to prevent reading past a certain
-    * point in the underlying {@code InputStream} (e.g. because you expect it to
+    * <p>Note that {@code pushLimit()} does NOT affect how many bytes the {@code
+    * CodedInputStream} reads from an underlying {@code InputStream} when
+    * refreshing its buffer. If you need to prevent reading past a certain point
+    * in the underlying {@code InputStream} (e.g. because you expect it to
     * contain more data after the end of the message which you need to handle
     * differently) then you must place a wrapper around your {@code InputStream}
     * which limits the amount of data that can be read from it.
     *
-    * @return the old limit.
+    * @return
+    *   the old limit.
     */
   def pushLimit(byteLimit0: Int): Int = {
     if (byteLimit0 < 0) {
@@ -222,7 +224,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
   /** Discards the current limit, returning to the previous limit.
     *
-    * @param oldLimit The old limit, as returned by { @code pushLimit}.
+    * @param oldLimit
+    *   The old limit, as returned by { @code pushLimit}.
     */
   def popLimit(oldLimit: Int): Unit = {
     currentLimit = oldLimit
@@ -231,8 +234,9 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
   /** Reads and discards a single field, given its tag value.
     *
-    * @return { @code false} if the tag is an endgroup tag, in which case
-    *                 nothing is skipped.  Otherwise, returns { @code true}.
+    * @return
+    *   { @code false} if the tag is an endgroup tag, in which case nothing is
+    *   skipped. Otherwise, returns { @code true}.
     */
   @throws(classOf[IOException])
   def skipField(tag: Int): Boolean = {
@@ -265,8 +269,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /** Reads and discards an entire message.  This will read either until EOF
-    * or until an endgroup tag, whichever comes first.
+  /** Reads and discards an entire message. This will read either until EOF or
+    * until an endgroup tag, whichever comes first.
     */
   def skipMessage(): Unit = {
     while (true) {
@@ -287,7 +291,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
-  /** Read a raw Varint from the stream.  If larger than 32 bits, discard the
+  /** Read a raw Varint from the stream. If larger than 32 bits, discard the
     * upper bits.
     */
   @throws[InvalidProtocolBufferException]
@@ -506,8 +510,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     readRawVarint32()
   }
 
-  /** Read an enum field value from the stream.  Caller is responsible
-    * for converting the numeric value to an actual enum.
+  /** Read an enum field value from the stream. Caller is responsible for
+    * converting the numeric value to an actual enum.
     */
   def readEnum(): Int = {
     readRawVarint32()
