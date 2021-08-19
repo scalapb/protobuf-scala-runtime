@@ -76,12 +76,16 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
 
   /** Copies bytes into a buffer.
     *
-    * @param target       buffer to copy into
-    * @param sourceOffset offset within these bytes
-    * @param targetOffset offset within the target buffer
-    * @param numberToCopy number of bytes to copy
-    * @throws IndexOutOfBoundsException if an offset or size is negative or too
-    *                                   large
+    * @param target
+    *   buffer to copy into
+    * @param sourceOffset
+    *   offset within these bytes
+    * @param targetOffset
+    *   offset within the target buffer
+    * @param numberToCopy
+    *   number of bytes to copy
+    * @throws IndexOutOfBoundsException
+    *   if an offset or size is negative or too large
     */
   def copyTo(
       target: Array[Byte],
@@ -147,11 +151,13 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     new ByteString(ba, 0, ba.length)
   }
 
-  /** Constructs a new {@code String} by decoding the bytes using the
-    * specified charset. Returns the same empty String if empty.
+  /** Constructs a new {@code String} by decoding the bytes using the specified
+    * charset. Returns the same empty String if empty.
     *
-    * @param charset encode using this charset
-    * @return new string
+    * @param charset
+    *   encode using this charset
+    * @return
+    *   new string
     */
   def toString(charset: Charset): String = {
     if (isEmpty) "" else toStringInternal(charset)
