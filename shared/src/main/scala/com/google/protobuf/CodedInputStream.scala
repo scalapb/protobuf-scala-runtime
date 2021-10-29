@@ -362,7 +362,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       }
       bufferPos = pos
       return x
-    } //todo: labels is not supported
+    } // todo: labels is not supported
   }
 
   private def skipRawVarint(): Unit = {
