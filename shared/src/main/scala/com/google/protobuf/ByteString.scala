@@ -176,7 +176,7 @@ object ByteString extends ByteStringCompanionParent {
     EMPTY
 
   def newBuilder: mutable.Builder[Byte, ByteString] =
-    Vector.newBuilder[Byte].mapResult { v: Vector[Byte] =>
+    Vector.newBuilder[Byte].mapResult { (v: Vector[Byte]) =>
       val r = new Array[Byte](v.size)
       new ByteString(v.toArray, 0, v.size)
     }

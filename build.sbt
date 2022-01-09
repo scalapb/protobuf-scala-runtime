@@ -61,7 +61,6 @@ lazy val protobufRuntimeScala =
         "com.lihaoyi" %%% "utest" % "0.7.10" % "test"
       ),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((3, _))            => List("-source:3.0-migration")
         case Some((2, v)) if v <= 11 => List("-target:jvm-1.7")
         case _                       => Nil
       }),

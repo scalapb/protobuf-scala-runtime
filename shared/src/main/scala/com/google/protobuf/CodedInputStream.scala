@@ -95,14 +95,14 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
   private var lastTag = 0
 
-  def this(buffer: Array[Byte], offset: Int, len: Int) {
+  def this(buffer: Array[Byte], offset: Int, len: Int) = {
     this(buffer, null)
     bufferPos = offset
     bufferSize = offset + len
     totalBytesRetired = -offset
   }
 
-  def this(is: InputStream) {
+  def this(is: InputStream) = {
     this(new Array[Byte](CodedInputStream.BUFFER_SIZE), is)
     totalBytesRetired = 0
   }
@@ -123,7 +123,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     */
   private def refillBuffer(n: Int): Unit = {
     if (!tryRefillBuffer(n)) {
-      throw InvalidProtocolBufferException.truncatedMessage
+      throw InvalidProtocolBufferException.truncatedMessage()
     }
   }
 
@@ -162,7 +162,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       if (bytesRead > 0) {
         bufferSize += bytesRead
         if (totalBytesRetired + n - sizeLimit > 0) {
-          throw InvalidProtocolBufferException.sizeLimitExceeded
+          throw InvalidProtocolBufferException.sizeLimitExceeded()
         }
         recomputeBufferSizeAfterLimit()
         return ((bufferSize >= n) || tryRefillBuffer(n))
@@ -210,15 +210,15 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     */
   def pushLimit(byteLimit0: Int): Int = {
     if (byteLimit0 < 0) {
-      throw InvalidProtocolBufferException.negativeSize
+      throw InvalidProtocolBufferException.negativeSize()
     }
     val byteLimit = byteLimit0 + totalBytesRetired + bufferPos
     val oldLimit: Int = currentLimit
     if (byteLimit > oldLimit) {
-      throw InvalidProtocolBufferException.truncatedMessage
+      throw InvalidProtocolBufferException.truncatedMessage()
     }
     currentLimit = byteLimit
-    recomputeBufferSizeAfterLimit
+    recomputeBufferSizeAfterLimit()
     oldLimit
   }
 
@@ -229,7 +229,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     */
   def popLimit(oldLimit: Int): Unit = {
     currentLimit = oldLimit
-    recomputeBufferSizeAfterLimit
+    recomputeBufferSizeAfterLimit()
   }
 
   /** Reads and discards a single field, given its tag value.
@@ -248,7 +248,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         skipRawBytes(8)
         true
       case WireFormat.WIRETYPE_LENGTH_DELIMITED =>
-        skipRawBytes(readRawVarint32)
+        skipRawBytes(readRawVarint32())
         true
       case WireFormat.WIRETYPE_START_GROUP =>
         skipMessage()
@@ -265,7 +265,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         skipRawBytes(4)
         true
       case _ =>
-        throw InvalidProtocolBufferException.invalidWireType
+        throw InvalidProtocolBufferException.invalidWireType()
     }
   }
 
@@ -274,7 +274,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     */
   def skipMessage(): Unit = {
     while (true) {
-      val tag: Int = readTag
+      val tag: Int = readTag()
       if (tag == 0 || !skipField(tag)) {
         return
       }
@@ -398,7 +398,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       }
       i += 1; i - 1
     }
-    throw InvalidProtocolBufferException.malformedVarint
+    throw InvalidProtocolBufferException.malformedVarint()
   }
 
   /** Exactly like skipRawBytes, but caller must have already checked the fast
@@ -406,11 +406,11 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     */
   private def skipRawBytesSlowPath(size: Int): Unit = {
     if (size < 0) {
-      throw InvalidProtocolBufferException.negativeSize
+      throw InvalidProtocolBufferException.negativeSize()
     }
     if (totalBytesRetired + bufferPos + size > currentLimit) {
       skipRawBytes(currentLimit - totalBytesRetired - bufferPos)
-      throw InvalidProtocolBufferException.truncatedMessage
+      throw InvalidProtocolBufferException.truncatedMessage()
     }
     var pos: Int = bufferSize - bufferPos
     bufferPos = bufferSize
@@ -435,7 +435,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
     lastTag = readRawVarint32()
     if (WireFormat.getTagFieldNumber(lastTag) == 0) {
-      throw InvalidProtocolBufferException.invalidTag
+      throw InvalidProtocolBufferException.invalidTag()
     }
     lastTag
   }
@@ -472,12 +472,12 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
   /** Read a {@code double} field value from the stream. */
   def readDouble(): Double = {
-    return java.lang.Double.longBitsToDouble(readRawLittleEndian64)
+    return java.lang.Double.longBitsToDouble(readRawLittleEndian64())
   }
 
   /** Read a {@code float} field value from the stream. */
   def readFloat(): Float = {
-    java.lang.Float.intBitsToFloat(readRawLittleEndian32)
+    java.lang.Float.intBitsToFloat(readRawLittleEndian32())
   }
 
   /** Read a {@code uint64} field value from the stream. */
@@ -524,22 +524,22 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
   /** Read an {@code sfixed64} field value from the stream. */
   def readSFixed64(): Long = {
-    readRawLittleEndian64
+    readRawLittleEndian64()
   }
 
   /** Read an {@code sint32} field value from the stream. */
   def readSInt32(): Int = {
-    decodeZigZag32(readRawVarint32)
+    decodeZigZag32(readRawVarint32())
   }
 
   /** Read an {@code sint64} field value from the stream. */
   def readSInt64(): Long = {
-    decodeZigZag64(readRawVarint64)
+    decodeZigZag64(readRawVarint64())
   }
 
   /** Read a {@code bool} field value from the stream. */
   def readBool(): Boolean = {
-    readRawVarint64 != 0
+    readRawVarint64() != 0
   }
 
   /** Read a raw Varint from the stream. */
@@ -644,14 +644,14 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     var result: Long = 0
     var shift: Int = 0
     while (shift < 64) {
-      val b: Byte = readRawByte
+      val b: Byte = readRawByte()
       result |= (b & 0x7f).toLong << shift
       if ((b & 0x80) == 0) {
         return result
       }
       shift += 7
     }
-    throw InvalidProtocolBufferException.malformedVarint
+    throw InvalidProtocolBufferException.malformedVarint()
   }
 
   /** Read a 32-bit little-endian integer from the stream. */
@@ -721,12 +721,12 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       if (size == 0) {
         return Internal.EMPTY_BYTE_ARRAY
       } else {
-        throw InvalidProtocolBufferException.negativeSize
+        throw InvalidProtocolBufferException.negativeSize()
       }
     }
     if (totalBytesRetired + bufferPos + size > currentLimit) {
       skipRawBytes(currentLimit - totalBytesRetired - bufferPos)
-      throw InvalidProtocolBufferException.truncatedMessage
+      throw InvalidProtocolBufferException.truncatedMessage()
     }
     if (size < BUFFER_SIZE) {
       val bytes: Array[Byte] = new Array[Byte](size)
@@ -755,7 +755,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
             if ((input == null)) -1
             else input.read(chunk, pos, chunk.length - pos)
           if (n == -1) {
-            throw InvalidProtocolBufferException.truncatedMessage
+            throw InvalidProtocolBufferException.truncatedMessage()
           }
           totalBytesRetired += n
           pos += n

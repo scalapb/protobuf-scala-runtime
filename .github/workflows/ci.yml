@@ -30,7 +30,7 @@ jobs:
         set -e
         ./ci_setup.sh
         sbt ++${{matrix.scala}} test
-        sbt scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
+        sbt scalafmtCheck Test/scalafmtCheck scalafmtSbtCheck
 
   # Single final job for mergify.
   ci-passed:
