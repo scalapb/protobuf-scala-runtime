@@ -8,7 +8,7 @@ val Scala300 = "3.1.0"
 val versionsBase = Seq(Scala212, Scala213)
 val versionsJVM = versionsBase :+ Scala300
 val versionsJS = versionsJVM
-val versionsNative = versionsBase
+val versionsNative = versionsJVM
 
 ThisBuild / scalaVersion := Scala212
 ThisBuild / crossScalaVersions := versionsBase
@@ -58,7 +58,7 @@ lazy val protobufRuntimeScala =
     .settings(
       name := "protobuf-runtime-scala",
       libraryDependencies ++= Seq(
-        "com.lihaoyi" %%% "utest" % "0.7.10" % "test"
+        "com.lihaoyi" %%% "utest" % "0.7.11" % "test"
       ),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, v)) if v <= 11 => List("-target:jvm-1.7")
