@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala212 = "2.12.15"
 val Scala213 = "2.13.8"
-val Scala3   = "3.1.2"
+val Scala3 = "3.1.2"
 
 val versionsBase = Seq(Scala212, Scala213)
 val versionsJVM = versionsBase :+ Scala3
@@ -71,14 +71,14 @@ lazy val protobufRuntimeScala =
           case Some((2, 13) | (3, _)) => base / s"scala-2.13+"
           case _                      => base / s"scala-2.13-"
         }
-      },
+      }
     )
     .jvmSettings(
       crossScalaVersions := Seq(Scala212, Scala213, Scala3),
       scalaOutputVersion := {
         CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => "3.0.2"
-          case _ => scalaVersion.value
+          case _            => scalaVersion.value
         }
       }
     )
@@ -101,7 +101,7 @@ lazy val protobufRuntimeScala =
       scalaOutputVersion := {
         CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => "3.0.2"
-          case _ => scalaVersion.value
+          case _            => scalaVersion.value
         }
       }
     )
