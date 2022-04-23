@@ -1,14 +1,14 @@
 import ReleaseTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-val Scala212 = "2.12.13"
-val Scala213 = "2.13.5"
-val Scala300 = "3.1.2"
+val Scala212 = "2.12.15"
+val Scala213 = "2.13.8"
+val Scala3   = "3.1.2"
 
 val versionsBase = Seq(Scala212, Scala213)
-val versionsJVM = versionsBase :+ Scala300
+val versionsJVM = versionsBase :+ Scala3
 val versionsJS = versionsJVM
-val versionsNative = versionsBase
+val versionsNative = versionsJVM
 
 ThisBuild / scalaVersion := Scala212
 ThisBuild / crossScalaVersions := versionsBase
@@ -58,7 +58,7 @@ lazy val protobufRuntimeScala =
     .settings(
       name := "protobuf-runtime-scala",
       libraryDependencies ++= Seq(
-        "com.lihaoyi" %%% "utest" % "0.7.10" % "test"
+        "com.lihaoyi" %%% "utest" % "0.7.11" % "test"
       ),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, v)) if v <= 11 => List("-target:jvm-1.7")
@@ -71,10 +71,16 @@ lazy val protobufRuntimeScala =
           case Some((2, 13) | (3, _)) => base / s"scala-2.13+"
           case _                      => base / s"scala-2.13-"
         }
-      }
+      },
     )
     .jvmSettings(
-      crossScalaVersions := Seq(Scala212, Scala213, Scala300)
+      crossScalaVersions := Seq(Scala212, Scala213, Scala3),
+      scalaOutputVersion := {
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((3, _)) => "3.0.2"
+          case _ => scalaVersion.value
+        }
+      }
     )
     .jsSettings(
       crossScalaVersions := versionsJS,
@@ -91,7 +97,13 @@ lazy val protobufRuntimeScala =
             else "-P:scalajs:mapSourceURI"
           List(s"$flag:$a->$g/")
         case _ => Nil
-      })
+      }),
+      scalaOutputVersion := {
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((3, _)) => "3.0.2"
+          case _ => scalaVersion.value
+        }
+      }
     )
     .nativeSettings(
       crossScalaVersions := versionsNative,
