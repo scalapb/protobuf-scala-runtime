@@ -37,17 +37,17 @@ object DoubleFloatSpec extends TestSuite {
       withCos(_.writeDoubleNoTag(0)) ==> (byteArray(0, 0, 0, 0, 0, 0, 0, 0))
       withCos(_.writeDoubleNoTag(1)) ==> (byteArray(0, 0, 0, 0, 0, 0, -16, 63))
       withCos(_.writeDoubleNoTag(-1)) ==> (byteArray(0, 0, 0, 0, 0, 0, -16,
-          -65))
+        -65))
       withCos(_.writeDoubleNoTag(13.1)) ==> (byteArray(51, 51, 51, 51, 51, 51,
-          42, 64))
+        42, 64))
       withCos(_.writeDoubleNoTag(-21.46)) ==> (byteArray(-10, 40, 92, -113, -62,
-          117, 53, -64))
+        117, 53, -64))
       withCos(_.writeDoubleNoTag(Double.NaN)) ==> (byteArray(0, 0, 0, 0, 0, 0,
-          -8, 127))
+        -8, 127))
       withCos(_.writeDoubleNoTag(Double.PositiveInfinity)) ==> (byteArray(0, 0,
-          0, 0, 0, 0, -16, 127))
+        0, 0, 0, 0, -16, 127))
       withCos(_.writeDoubleNoTag(Double.NegativeInfinity)) ==> (byteArray(0, 0,
-          0, 0, 0, 0, -16, -1))
+        0, 0, 0, 0, -16, -1))
     }
 
     "writeFloatNoTag produce correct values" - {
