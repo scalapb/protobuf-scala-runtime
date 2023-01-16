@@ -91,7 +91,7 @@ lazy val protobufRuntimeScala =
             else "-P:scalajs:mapSourceURI"
           List(s"$flag:$a->$g/")
         case _ => Nil
-      }),
+      })
     )
     .nativeSettings(
       crossScalaVersions := versionsNative,
