@@ -58,7 +58,7 @@ lazy val protobufRuntimeScala =
     .settings(
       name := "protobuf-runtime-scala",
       libraryDependencies ++= Seq(
-        "com.lihaoyi" %%% "utest" % "0.7.11" % "test"
+        "com.lihaoyi" %%% "utest" % "0.8.1" % "test"
       ),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, v)) if v <= 11 => List("-target:jvm-1.7")
@@ -74,13 +74,7 @@ lazy val protobufRuntimeScala =
       }
     )
     .jvmSettings(
-      crossScalaVersions := Seq(Scala212, Scala213, Scala3),
-      scalaOutputVersion := {
-        CrossVersion.partialVersion(scalaVersion.value) match {
-          case Some((3, _)) => "3.0.2"
-          case _            => scalaVersion.value
-        }
-      }
+      crossScalaVersions := Seq(Scala212, Scala213, Scala3)
     )
     .jsSettings(
       crossScalaVersions := versionsJS,
@@ -98,12 +92,6 @@ lazy val protobufRuntimeScala =
           List(s"$flag:$a->$g/")
         case _ => Nil
       }),
-      scalaOutputVersion := {
-        CrossVersion.partialVersion(scalaVersion.value) match {
-          case Some((3, _)) => "3.0.2"
-          case _            => scalaVersion.value
-        }
-      }
     )
     .nativeSettings(
       crossScalaVersions := versionsNative,

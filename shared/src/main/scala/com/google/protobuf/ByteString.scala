@@ -146,6 +146,13 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
 
   def toStringUtf8(): String = toString(Internal.UTF_8)
 
+  def isValidUtf8(): Boolean = try {
+    toStringUtf8()
+    true
+  } catch {
+    case _: Throwable => false
+  }
+
   def concat(other: ByteString): ByteString = {
     val ba = toByteArray() ++ other
     new ByteString(ba, 0, ba.length)
