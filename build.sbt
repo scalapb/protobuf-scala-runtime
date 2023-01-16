@@ -1,4 +1,3 @@
-import ReleaseTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala212 = "2.12.17"
@@ -17,27 +16,6 @@ ThisBuild / organization := "com.thesamet.scalapb"
 
 ThisBuild / scalacOptions ++= Seq(
   "-Xfuture"
-)
-
-ThisBuild / resolvers += Resolver.JCenterRepository
-
-releaseCrossBuild := true
-
-releasePublishArtifactsAction := PgpKeys.publishSigned.value
-
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  releaseStepCommandAndRemaining("+publishSigned;"),
-  releaseStepCommand("sonatypeBundleRelease"),
-  setNextVersion,
-  commitNextVersion,
-  pushChanges
 )
 
 ThisBuild / publishTo := sonatypePublishToBundle.value
