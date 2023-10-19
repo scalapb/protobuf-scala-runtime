@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         scala: [2.12.x, 2.13.x, 3.x]
@@ -27,7 +27,6 @@ jobs:
       shell: bash
       run: |
         set -e
-        ./ci_setup.sh
         sbt ++${{matrix.scala}} test
         sbt scalafmtCheck Test/scalafmtCheck scalafmtSbtCheck
 
