@@ -141,8 +141,9 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         s"refillBuffer() called when $n bytes were already available in buffer"
       )
     }
-    if (totalBytesRetired + bufferPos + n > currentLimit) false
-    else if (input != null) {
+    if (totalBytesRetired + bufferPos + n > currentLimit) {
+      return false
+    } else if (input != null) {
       val pos: Int = bufferPos
       if (pos > 0) {
         if (bufferSize > pos) {
