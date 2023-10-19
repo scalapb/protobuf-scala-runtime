@@ -4,13 +4,8 @@ val Scala212 = "2.12.18"
 val Scala213 = "2.13.12"
 val Scala3 = "3.2.2"
 
-val versionsBase = Seq(Scala212, Scala213)
-val versionsJVM = versionsBase :+ Scala3
-val versionsJS = versionsJVM
-val versionsNative = versionsJVM
-
 ThisBuild / scalaVersion := Scala212
-ThisBuild / crossScalaVersions := versionsBase
+ThisBuild / crossScalaVersions := Seq(Scala212, Scala213, Scala3)
 
 ThisBuild / organization := "com.thesamet.scalapb"
 
@@ -51,11 +46,7 @@ lazy val protobufRuntimeScala =
         }
       }
     )
-    .jvmSettings(
-      crossScalaVersions := Seq(Scala212, Scala213, Scala3)
-    )
     .jsSettings(
-      crossScalaVersions := versionsJS,
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((version, _)) =>
           val a = (LocalRootProject / baseDirectory).value.toURI.toString
@@ -72,7 +63,6 @@ lazy val protobufRuntimeScala =
       })
     )
     .nativeSettings(
-      crossScalaVersions := versionsNative,
       nativeLinkStubs := true // for utest
     )
 
