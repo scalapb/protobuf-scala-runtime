@@ -9,8 +9,16 @@ ThisBuild / crossScalaVersions := Seq(Scala212, Scala213, Scala3)
 
 ThisBuild / organization := "com.thesamet.scalapb"
 
+ThisBuild / scalacOptions ++= {
+  if (scalaBinaryVersion.value == "2.12") {
+    Seq("-Xfuture")
+  } else {
+    Nil
+  }
+}
+
 ThisBuild / scalacOptions ++= Seq(
-  "-Xfuture"
+  "-deprecation"
 )
 
 ThisBuild / publishTo := sonatypePublishToBundle.value
