@@ -8,7 +8,7 @@ abstract class ByteStringCompanionParent
   override def fromSpecific(it: IterableOnce[Byte]): ByteString = {
     val builder = newBuilder
     builder ++= it
-    builder.result
+    builder.result()
   }
 
 }
