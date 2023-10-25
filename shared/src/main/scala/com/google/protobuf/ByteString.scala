@@ -158,7 +158,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     new ByteString(ba, 0, ba.length)
   }
 
-  /** Constructs a new {@code String} by decoding the bytes using the specified
+  /** Constructs a new {@@codeString} by decoding the bytes using the specified
     * charset. Returns the same empty String if empty.
     *
     * @param charset
