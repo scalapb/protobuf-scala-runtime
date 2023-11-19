@@ -132,8 +132,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     * not yet available, and that the requested space is less than BUFFER_SIZE.
     *
     * @return
-    *   { @code true} if the bytes could be made available; { @code false} if
-    *   the end of the stream or the current limit was reached.
+    *   {@code true} if the bytes could be made available; {@code false} if the
+    *   end of the stream or the current limit was reached.
     */
   private def tryRefillBuffer(n: Int): Boolean = {
     if (bufferPos + n <= bufferSize) {
@@ -185,7 +185,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
 
   /** Returns true if the stream has reached the end of the input. This is the
     * case if either the end of the underlying input source has been reached or
-    * if the stream has reached a limit created using {@link #pushLimit(int)}.
+    * if the stream has reached a limit created using {@link #pushLimit(int)} .
     */
   def isAtEnd: Boolean = {
     bufferPos == bufferSize && !tryRefillBuffer(1)
@@ -195,7 +195,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     totalBytesRetired + bufferPos
   }
 
-  /** Sets {@code currentLimit} to (current position) + {@code byteLimit}. This
+  /** Sets {@code currentLimit} to (current position) + {@code byteLimit} . This
     * is called when descending into a length-delimited embedded message.
     *
     * <p>Note that {@code pushLimit()} does NOT affect how many bytes the {@code
@@ -226,7 +226,7 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   /** Discards the current limit, returning to the previous limit.
     *
     * @param oldLimit
-    *   The old limit, as returned by { @code pushLimit}.
+    *   The old limit, as returned by {@code pushLimit} .
     */
   def popLimit(oldLimit: Int): Unit = {
     currentLimit = oldLimit
@@ -236,8 +236,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
   /** Reads and discards a single field, given its tag value.
     *
     * @return
-    *   { @code false} if the tag is an endgroup tag, in which case nothing is
-    *   skipped. Otherwise, returns { @code true}.
+    *   {@code false} if the tag is an endgroup tag, in which case nothing is
+    *   skipped. Otherwise, returns {@code true} .
     */
   @throws(classOf[IOException])
   def skipField(tag: Int): Boolean = {
