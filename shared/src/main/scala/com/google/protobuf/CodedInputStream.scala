@@ -462,6 +462,10 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
     }
   }
 
+  def getLastTag(): Int = {
+    lastTag
+  }
+
   def getBytesUntilLimit: Int = {
     if (currentLimit == Integer.MAX_VALUE) {
       return -1
