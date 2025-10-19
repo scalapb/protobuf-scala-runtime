@@ -308,7 +308,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         (({
           x = buffer(({
             pos += 1; pos - 1
-          })); x
+          }));
+          x
         })) >= 0
       ) {
         bufferPos = pos
@@ -319,7 +320,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         (({
           x ^= (buffer(({
             pos += 1; pos - 1
-          })) << 7); x
+          })) << 7);
+          x
         })) < 0
       ) {
         x ^= (~0 << 7)
@@ -327,7 +329,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         (({
           x ^= (buffer(({
             pos += 1; pos - 1
-          })) << 14); x
+          })) << 14);
+          x
         })) >= 0
       ) {
         x ^= (~0 << 7) ^ (~0 << 14)
@@ -335,7 +338,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
         (({
           x ^= (buffer(({
             pos += 1; pos - 1
-          })) << 21); x
+          })) << 21);
+          x
         })) < 0
       ) {
         x ^= (~0 << 7) ^ (~0 << 14) ^ (~0 << 21)
@@ -557,7 +561,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         y = buffer(({
           pos += 1; pos - 1
-        })); y
+        }));
+        y
       })) >= 0
     ) {
       bufferPos = pos
@@ -568,7 +573,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         y ^= (buffer(({
           pos += 1; pos - 1
-        })) << 7); y
+        })) << 7);
+        y
       })) < 0
     ) {
       x = y ^ (~0 << 7)
@@ -576,7 +582,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         y ^= (buffer(({
           pos += 1; pos - 1
-        })) << 14); y
+        })) << 14);
+        y
       })) >= 0
     ) {
       x = y ^ ((~0 << 7) ^ (~0 << 14))
@@ -584,7 +591,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         y ^= (buffer(({
           pos += 1; pos - 1
-        })) << 21); y
+        })) << 21);
+        y
       })) < 0
     ) {
       x = y ^ ((~0 << 7) ^ (~0 << 14) ^ (~0 << 21))
@@ -592,7 +600,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         x = (y.toLong) ^ (buffer(({
           pos += 1; pos - 1
-        })).toLong << 28); x
+        })).toLong << 28);
+        x
       })) >= 0L
     ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28)
@@ -600,7 +609,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         x ^= (buffer(({
           pos += 1; pos - 1
-        })).toLong << 35); x
+        })).toLong << 35);
+        x
       })) < 0L
     ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28) ^ (~0L << 35)
@@ -608,7 +618,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         x ^= (buffer(({
           pos += 1; pos - 1
-        })).toLong << 42); x
+        })).toLong << 42);
+        x
       })) >= 0L
     ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28) ^ (~0L << 35) ^ (~0L << 42)
@@ -616,7 +627,8 @@ class CodedInputStream private (buffer: Array[Byte], input: InputStream) {
       (({
         x ^= (buffer(({
           pos += 1; pos - 1
-        })).toLong << 49); x
+        })).toLong << 49);
+        x
       })) < 0L
     ) {
       x ^= (~0L << 7) ^ (~0L << 14) ^ (~0L << 21) ^ (~0L << 28) ^ (~0L << 35) ^ (~0L << 42) ^ (~0L << 49)
