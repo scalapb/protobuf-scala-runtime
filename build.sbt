@@ -39,7 +39,7 @@ lazy val protobufRuntimeScala =
     .settings(
       name := "protobuf-runtime-scala",
       libraryDependencies ++= Seq(
-        "com.lihaoyi" %%% "utest" % "0.8.9" % "test"
+        "com.lihaoyi" %%% "utest" % "0.9.2" % "test"
       ),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, v)) if v <= 11 => List("-target:jvm-1.7")
