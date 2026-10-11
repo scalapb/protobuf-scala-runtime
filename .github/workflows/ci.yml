@@ -1,39 +1,73 @@
 name: CI
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_call]
+
+permissions:
+  contents: read
 
 jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - run: sbt scalafmtCheckAll scalafmtSbtCheck
+
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
-        scala: [2.12.x, 2.13.x, 3.x]
-
+        scala: [2.12.x, 2.13.x, 3.3.x]
+        platform: [JVM, JS, Native]
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-java@v4
-      with:
-        java-version: 11
-        distribution: temurin
-    - name: Mount caches
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.sbt
-          ~/.ivy2/cache
-          ~/.cache/coursier
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/*.sbt') }}
-    - uses: sbt/setup-sbt@v1
-    - name: Compile and test
-      shell: bash
-      run: |
-        set -e
-        sbt ++${{matrix.scala}} test
-        sbt scalafmtCheck Test/scalafmtCheck scalafmtSbtCheck
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - uses: actions/setup-node@v4
+        if: matrix.platform == 'JS'
+        with:
+          node-version: '22'
+      - name: Install Native prerequisites
+        if: matrix.platform == 'Native'
+        run: sudo apt-get update && sudo apt-get install -y clang libgc-dev libunwind-dev
+      - name: Compile and test
+        run: sbt '++${{ matrix.scala }}' 'protobufRuntimeScala${{ matrix.platform }}/test' 'integration${{ matrix.platform }}/test'
 
-  # Single final job for mergify.
+  compatibility:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        scala: [2.12.x, 2.13.x, 3.3.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: temurin
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - name: Check binary compatibility and run the old consumer on Java 8
+        run: JAVA8_HOME="$JAVA_HOME_8_X64" sbt '++${{ matrix.scala }}' protobufRuntimeScalaJVM/mimaReportBinaryIssues binaryConsumer/compatibilitySmoke
+
+  # Stable required check for branch protection and Mergify, including failures.
   ci-passed:
-    runs-on: ubuntu-latest
-    needs: build
+    runs-on: ubuntu-24.04
+    if: always()
+    needs: [format, build, compatibility]
     steps:
-    - run: ':'
+      - run: test '${{ needs.format.result }}' = success && test '${{ needs.build.result }}' = success && test '${{ needs.compatibility.result }}' = success

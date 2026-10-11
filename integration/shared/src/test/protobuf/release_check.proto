@@ -1,0 +1,16 @@
+syntax = "proto3";
+package releasecheck;
+
+message Envelope {
+  message Child {
+    string name = 1;
+    bytes payload = 2;
+  }
+  Child child = 1;
+  repeated sint64 numbers = 2 [packed = true];
+  map<string, Child> entries = 3;
+  oneof choice {
+    string text = 4;
+    Child selected = 5;
+  }
+}
