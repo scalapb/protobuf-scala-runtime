@@ -21,7 +21,7 @@ object WireCompatibilitySpec extends TestSuite {
       case "sint64"   => out.writeSInt64NoTag(value)
       case "fixed64"  => out.writeFixed64NoTag(value)
       case "sfixed64" => out.writeSFixed64NoTag(value)
-      case "float" =>
+      case "float"    =>
         out.writeFloatNoTag(java.lang.Float.intBitsToFloat(value.toInt))
       case "double" =>
         out.writeDoubleNoTag(java.lang.Double.longBitsToDouble(value))
@@ -57,7 +57,7 @@ object WireCompatibilitySpec extends TestSuite {
     case "sint64"   => CodedOutputStream.computeSInt64SizeNoTag(value)
     case "fixed64"  => CodedOutputStream.computeFixed64SizeNoTag(value)
     case "sfixed64" => CodedOutputStream.computeSFixed64SizeNoTag(value)
-    case "float" =>
+    case "float"    =>
       CodedOutputStream.computeFloatSizeNoTag(
         java.lang.Float.intBitsToFloat(value.toInt)
       )
