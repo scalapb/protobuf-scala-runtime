@@ -19,6 +19,7 @@ object CodedOutputStream {
   }
 
   def newInstance(output: OutputStream, bufferSize: Int): CodedOutputStream = {
+    require(bufferSize > 0, "Output buffer size must be positive")
     new CodedOutputStream(output, Array.ofDim[Byte](bufferSize))
   }
 
@@ -218,6 +219,13 @@ object CodedOutputStream {
 }
 
 class CodedOutputStream(output: OutputStream, buffer: Array[Byte]) {
+  require(output == null || buffer.nonEmpty, "Output buffer must be nonempty")
+
+  private def checkRange(value: Array[Byte], offset: Int, length: Int): Unit = {
+    if (offset < 0 || length < 0 || offset > value.length - length)
+      throw new IndexOutOfBoundsException()
+  }
+
   private def refreshBuffer(): Unit = {
     if (output == null) {
       throw new OutOfSpaceException()
@@ -315,6 +323,7 @@ class CodedOutputStream(output: OutputStream, buffer: Array[Byte]) {
       offset: Int,
       length: Int
   ): Unit = {
+    checkRange(value, offset, length)
     writeTag(fieldNumber, WireFormat.WIRETYPE_LENGTH_DELIMITED)
     writeByteArrayNoTag(value, offset, length)
   }
@@ -459,6 +468,7 @@ class CodedOutputStream(output: OutputStream, buffer: Array[Byte]) {
       offset: Int,
       length: Int
   ): Unit = {
+    checkRange(value, offset, length)
     writeRawVarint32(length)
     writeRawBytes(value, offset, length)
   }
@@ -575,6 +585,7 @@ class CodedOutputStream(output: OutputStream, buffer: Array[Byte]) {
   }
 
   def writeRawBytes(value: Array[Byte], offset0: Int, length0: Int): Unit = {
+    checkRange(value, offset0, length0)
     var offset = offset0
     var length = length0
     if (limit - position >= length) {
