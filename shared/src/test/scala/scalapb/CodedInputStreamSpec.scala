@@ -46,6 +46,21 @@ object CodedInputStreamSpec extends TestSuite {
   }
 
   val tests = Tests {
+    test("last tag tracks reads and resets at end of input") {
+      for (in <- inputs(bytes(8, 42, 16, 7))) {
+        assert(in.getLastTag() == 0)
+        assert(in.readTag() == 8)
+        assert(in.getLastTag() == 8)
+        assert(in.readInt32() == 42)
+        assert(in.getLastTag() == 8)
+        assert(in.readTag() == 16)
+        assert(in.getLastTag() == 16)
+        assert(in.readInt32() == 7)
+        assert(in.readTag() == 0)
+        assert(in.getLastTag() == 0)
+      }
+    }
+
     test("varint boundaries every bit and deterministic random values") {
       val random = new scala.util.Random(0x5ca1abL)
       val values = Seq(0L, -1L, Long.MinValue, Long.MaxValue) ++
