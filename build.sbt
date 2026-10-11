@@ -28,7 +28,7 @@ ThisBuild / scalacOptions ++= Seq(
 
 lazy val root = project
   .in(file("."))
-  .aggregate(runtimeJS, runtimeJVM, runtimeNative)
+  .aggregate(runtimeJS, runtimeJVM, runtimeNative, wireFixtureGenerator)
   .settings(
     publish / skip := true,
     generateWireFixtures := (wireFixtureGenerator / generateWireFixtures).value,
@@ -79,8 +79,8 @@ lazy val runtimeJS = protobufRuntimeScala.js
 lazy val runtimeJVM = protobufRuntimeScala.jvm
 lazy val runtimeNative = protobufRuntimeScala.native
 
-// Keep this helper outside the runtime aggregate and library classpaths:
-// Google's classes have the same names as ours and run only in the generator JVM.
+// Aggregate this helper so Scala Steward discovers its dependency, but do not
+// add it to runtime classpaths: Google's classes run only in the generator JVM.
 lazy val wireFixtureGenerator = project
   .in(file("tools/wire-fixtures"))
   .settings(

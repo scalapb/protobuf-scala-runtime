@@ -102,9 +102,18 @@ regenerates the fixtures. To run generation explicitly:
 sbt generateWireFixtures
 ```
 
-The generator is neither published nor aggregated into the library's cross-build.
+The generator is aggregated so Scala Steward discovers its dependency, but is
+not published or added to runtime classpaths and stays on a single compiler.
 Update `ProtobufJava` in `build.sbt` to change the reference implementation, then
 run `sbt +test` to check all compiler/platform combinations.
+
+## Dependency updates
+
+Scala Steward pins Scala 3 to the `3.3.` prefix, allowing patch releases while
+preserving the consumer baseline even when a newer LTS is available. The rules
+cover the JVM compiler/library, both Scala.js module naming forms, and Native's
+`scala3lib` (whose version also includes the Native version). Other dependencies,
+including the generator's `protobuf-java`, remain eligible for normal updates.
 
 ## Publishing
 
