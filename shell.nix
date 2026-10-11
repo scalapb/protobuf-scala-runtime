@@ -3,12 +3,12 @@
 with pkgs;
 
 let
-  sbt = pkgs.sbt.override { jre = openjdk11; };
+  sbt = pkgs.sbt.override { jre = jdk21; };
 in
 mkShell {
   buildInputs = [
     sbt
-    openjdk11
+    jdk21
     nodejs
     clang
 

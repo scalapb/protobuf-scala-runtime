@@ -1,8 +1,8 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-val Scala212 = "2.12.19"
-val Scala213 = "2.13.14"
-val Scala3 = "3.3.3"
+val Scala212 = "2.12.21"
+val Scala213 = "2.13.18"
+val Scala3 = "3.3.8"
 
 ThisBuild / scalaVersion := Scala212
 ThisBuild / crossScalaVersions := Seq(Scala212, Scala213, Scala3)
@@ -21,15 +21,11 @@ ThisBuild / scalacOptions ++= Seq(
   "-deprecation"
 )
 
-ThisBuild / publishTo := sonatypePublishToBundle.value
-
 lazy val root = project
   .in(file("."))
   .aggregate(runtimeJS, runtimeJVM, runtimeNative)
   .settings(
-    publish := {},
-    publishLocal := {},
-    publishArtifact := false
+    publish / skip := true
   )
 
 lazy val protobufRuntimeScala =
@@ -39,12 +35,9 @@ lazy val protobufRuntimeScala =
     .settings(
       name := "protobuf-runtime-scala",
       libraryDependencies ++= Seq(
-        "com.lihaoyi" %%% "utest" % "0.8.3" % "test"
+        "com.lihaoyi" %%% "utest" % "0.9.5" % "test"
       ),
-      scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, v)) if v <= 11 => List("-target:jvm-1.7")
-        case _                       => Nil
-      }),
+      scalacOptions ++= Seq("-release:8"),
       Compile / unmanagedSourceDirectories += {
         val base =
           (LocalRootProject / baseDirectory).value / "shared" / "src" / "main"
