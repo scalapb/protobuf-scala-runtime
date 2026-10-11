@@ -7,10 +7,17 @@ import java.nio.charset.UnsupportedCharsetException
 
 import scala.collection._
 
-class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
-    extends ByteStringParent {
+class ByteString private (
+    bytesIn: Array[Byte],
+    private val start: Int,
+    len: Int
+) extends ByteStringParent {
 
-  val bytes = bytesIn
+  private val buffer = bytesIn
+
+  /** Returns a defensive copy of this value's bytes. */
+  @deprecated("Use toByteArray()", "next")
+  def bytes: Array[Byte] = toByteArray()
 
   def length: Int = len
 
@@ -20,7 +27,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
       val upperLimit = start + len
       var i = start
       while (i < upperLimit) {
-        h = h * 31 + bytes(i)
+        h = h * 31 + buffer(i)
         i += 1
       }
     }
@@ -31,14 +38,14 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
   }
 
   def apply(i: Int): Byte =
-    if (i < 0 || i >= start + len)
+    if (i < 0 || i >= len)
       throw new IndexOutOfBoundsException(i.toString)
-    else bytes(start + i)
+    else buffer(start + i)
 
   override def slice(from: Int, until: Int): ByteString = {
-    val lo = math.max(from, 0)
+    val lo = math.min(math.max(from, 0), len)
     val hi = math.max(math.min(until, len), lo)
-    new ByteString(bytes, start + lo, hi - lo)
+    new ByteString(buffer, start + lo, hi - lo)
   }
 
   override def equals(that: Any): Boolean = {
@@ -58,10 +65,10 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
   private def equalsRange(other: ByteString): Boolean =
     other.length == length && {
       var thisIndex = start
-      var otherIndex = 0
+      var otherIndex = other.start
       val upperLimit = start + len
       while (thisIndex < upperLimit) {
-        if (bytes(thisIndex) != other.bytes(otherIndex)) {
+        if (buffer(thisIndex) != other.buffer(otherIndex)) {
           return false
         }
         thisIndex += 1
@@ -71,7 +78,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     }
 
   def writeTo(out: OutputStream) = {
-    out.write(bytes, start, len)
+    out.write(buffer, start, len)
   }
 
   /** Copies bytes into a buffer.
@@ -102,19 +109,19 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     if (numberToCopy < 0) {
       throw new IndexOutOfBoundsException("Length < 0: " + numberToCopy)
     }
-    if (sourceOffset + numberToCopy > size) {
+    if (sourceOffset > size - numberToCopy) {
       throw new IndexOutOfBoundsException(
         "Source end offset < 0: " + (sourceOffset + numberToCopy)
       )
     }
-    if (targetOffset + numberToCopy > target.length) {
+    if (targetOffset > target.length - numberToCopy) {
       throw new IndexOutOfBoundsException(
         "Target end offset < 0: " + (targetOffset + numberToCopy)
       )
     }
     if (numberToCopy > 0) {
       System.arraycopy(
-        bytes,
+        buffer,
         start + sourceOffset,
         target,
         targetOffset,
@@ -123,13 +130,14 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
     }
   }
 
-  def newCodedInput(): CodedInputStream = CodedInputStream.newInstance(bytes)
+  def newCodedInput(): CodedInputStream =
+    CodedInputStream.newInstance(buffer, start, len)
 
   def newInput(): java.io.InputStream =
-    new java.io.ByteArrayInputStream(bytes, start, len)
+    new java.io.ByteArrayInputStream(buffer, start, len)
 
   private def toStringInternal(charset: Charset) = {
-    new String(bytes, start, len, charset)
+    new String(buffer, start, len, charset)
   }
 
   @throws[UnsupportedEncodingException]
@@ -146,12 +154,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
 
   def toStringUtf8(): String = toString(Internal.UTF_8)
 
-  def isValidUtf8(): Boolean = try {
-    toStringUtf8()
-    true
-  } catch {
-    case _: Throwable => false
-  }
+  def isValidUtf8(): Boolean = Utf8.isValid(buffer, start, len)
 
   def concat(other: ByteString): ByteString = {
     val ba = toByteArray() ++ other
@@ -172,7 +175,7 @@ class ByteString private (bytesIn: Array[Byte], start: Int, len: Int)
 
   def toByteArray(): Array[Byte] = {
     val dest = new Array[Byte](length)
-    System.arraycopy(bytes, start, dest, 0, len)
+    System.arraycopy(buffer, start, dest, 0, len)
     dest
   }
 }
@@ -184,11 +187,12 @@ object ByteString extends ByteStringCompanionParent {
 
   def newBuilder: mutable.Builder[Byte, ByteString] =
     Vector.newBuilder[Byte].mapResult { (v: Vector[Byte]) =>
-      val r = new Array[Byte](v.size)
       new ByteString(v.toArray, 0, v.size)
     }
 
   def copyFrom(bytes: Array[Byte], offset: Int, size: Int) = {
+    if (offset < 0 || size < 0 || offset > bytes.length - size)
+      throw new IndexOutOfBoundsException()
     val copy: Array[Byte] = new Array[Byte](size)
     System.arraycopy(bytes, offset, copy, 0, size)
     new ByteString(copy, 0, size)
@@ -217,6 +221,8 @@ object ByteString extends ByteStringCompanionParent {
     }
 
     override def write(b: Array[Byte], offset: Int, len: Int): Unit = {
+      if (offset < 0 || len < 0 || offset > b.length - len)
+        throw new IndexOutOfBoundsException()
       bytes ++= b.slice(offset, offset + len)
     }
 

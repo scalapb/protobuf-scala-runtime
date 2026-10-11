@@ -33,7 +33,7 @@ object DoubleFloatSpec extends TestSuite {
   }
 
   val tests = Tests {
-    "writeDoubleNoTag produce correct values" - {
+    test("writeDoubleNoTag produce correct values") {
       withCos(_.writeDoubleNoTag(0)) ==> (byteArray(0, 0, 0, 0, 0, 0, 0, 0))
       withCos(_.writeDoubleNoTag(1)) ==> (byteArray(0, 0, 0, 0, 0, 0, -16, 63))
       withCos(_.writeDoubleNoTag(-1)) ==> (byteArray(0, 0, 0, 0, 0, 0, -16,
@@ -50,7 +50,7 @@ object DoubleFloatSpec extends TestSuite {
         0, 0, 0, 0, -16, -1))
     }
 
-    "writeFloatNoTag produce correct values" - {
+    test("writeFloatNoTag produce correct values") {
       withCos(_.writeFloatNoTag(0)) ==> (byteArray(0, 0, 0, 0))
       withCos(_.writeFloatNoTag(1)) ==> (byteArray(0, 0, -128, 63))
       withCos(_.writeFloatNoTag(-1)) ==> (byteArray(0, 0, -128, -65))
@@ -71,7 +71,7 @@ object DoubleFloatSpec extends TestSuite {
       ))
     }
 
-    "reading serialized double return original value" - {
+    test("reading serialized double return original value") {
       validateDouble(0)
       validateDouble(1)
       validateDouble(-1)
@@ -82,7 +82,7 @@ object DoubleFloatSpec extends TestSuite {
       validateDouble(Float.NegativeInfinity)
     }
 
-    "reading serialized floats return original value" - {
+    test("reading serialized floats return original value") {
       validateFloat(0)
       validateFloat(1)
       validateFloat(-1)
