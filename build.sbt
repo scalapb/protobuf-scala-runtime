@@ -28,7 +28,16 @@ ThisBuild / scalacOptions ++= Seq(
 
 lazy val root = project
   .in(file("."))
-  .aggregate(runtimeJS, runtimeJVM, runtimeNative, wireFixtureGenerator)
+  .aggregate(
+    runtimeJS,
+    runtimeJVM,
+    runtimeNative,
+    wireFixtureGenerator,
+    binaryConsumer,
+    integrationJVM,
+    integrationJS,
+    integrationNative
+  )
   .settings(
     publish / skip := true,
     generateWireFixtures := (wireFixtureGenerator / generateWireFixtures).value,
@@ -124,3 +133,91 @@ lazy val wireFixtureGenerator = project
       generate(inputs).toSeq
     }
   )
+
+// Compile a real downstream caller against the last release, then execute its
+// unchanged class files with this build. JAVA8_HOME also tests the Java 8 floor.
+lazy val compatibilitySmoke =
+  taskKey[Unit]("Run a previously compiled consumer with the current runtime")
+lazy val binaryConsumer = project
+  .in(file("tools/binary-consumer"))
+  .settings(
+    publish / skip := true,
+    scalacOptions += "-release:8",
+    libraryDependencies += "com.thesamet.scalapb" %% "protobuf-runtime-scala" % "0.8.16",
+    compatibilitySmoke := {
+      val oldClasspath = (Compile / fullClasspath).value.files
+      val currentJar = (runtimeJVM / Compile / packageBin).value
+      val currentClasspath =
+        (runtimeJVM / Compile / dependencyClasspath).value.files :+ currentJar
+      require(
+        oldClasspath
+          .count(_.getName.startsWith("protobuf-runtime-scala_")) == 1,
+        "Expected exactly one previous-release runtime"
+      )
+      val classpath = oldClasspath.filterNot(
+        _.getName.startsWith("protobuf-runtime-scala_")
+      ) ++ currentClasspath
+      val home = sys.env
+        .get("JAVA8_HOME")
+        .map(file)
+        .getOrElse(file(sys.props("java.home")))
+      val result = sys.process
+        .Process(
+          Seq(
+            (home / "bin" / "java").getAbsolutePath,
+            "-cp",
+            classpath.distinct.mkString(java.io.File.pathSeparator),
+            "compatibility.PreviousReleaseConsumer"
+          )
+        )
+        .!
+      if (result != 0)
+        sys.error("Binary compatibility / Java runtime smoke test failed")
+    }
+  )
+
+lazy val integration = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .crossType(CrossType.Full)
+  .in(file("integration"))
+  .dependsOn(protobufRuntimeScala)
+  .settings(
+    publish / skip := true,
+    libraryDependencies ++= Seq(
+      ("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % Test)
+        .excludeAll(
+          ExclusionRule(organization = "com.google.protobuf"),
+          ExclusionRule(
+            organization = "com.thesamet.scalapb",
+            name = "protobuf-runtime-scala*"
+          )
+        ),
+      "com.lihaoyi" %%% "utest" % "0.9.5" % Test
+    ),
+    Test / fullClasspath := {
+      val classpath = (Test / fullClasspath).value
+      require(
+        !classpath.exists { entry =>
+          val name = entry.data.getName
+          name.startsWith("protobuf-java-") || name
+            .startsWith("protobuf-runtime-scala_")
+        },
+        "Integration tests must use only this checkout's wire runtime"
+      )
+      classpath
+    },
+    Test / PB.protoSources := Seq(
+      (LocalRootProject / baseDirectory).value / "integration" / "shared" / "src" / "test" / "protobuf"
+    ),
+    Test / PB.targets := Seq(
+      scalapb.gen() -> (Test / sourceManaged).value / "scalapb"
+    ),
+    // Recompile the same consumer against the new API as a source-compatibility check.
+    Test / unmanagedSourceDirectories += (LocalRootProject / baseDirectory).value / "tools" / "binary-consumer" / "src" / "main" / "scala"
+  )
+lazy val integrationJVM = integration.jvm
+lazy val integrationJS = integration.js
+lazy val integrationNative = integration.native
+
+runtimeJVM / mimaPreviousArtifacts := Set(
+  organization.value %% "protobuf-runtime-scala" % "0.8.16"
+)
