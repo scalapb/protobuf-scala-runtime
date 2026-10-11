@@ -3,6 +3,11 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 val Scala212 = "2.12.21"
 val Scala213 = "2.13.18"
 val Scala3 = "3.3.8"
+val ProtobufJava = "4.36.2"
+
+lazy val generateWireFixtures = taskKey[Seq[File]](
+  "Generate shared wire-format test sources with Google's protobuf runtime"
+)
 
 ThisBuild / scalaVersion := Scala212
 ThisBuild / crossScalaVersions := Seq(Scala212, Scala213, Scala3)
@@ -25,7 +30,9 @@ lazy val root = project
   .in(file("."))
   .aggregate(runtimeJS, runtimeJVM, runtimeNative)
   .settings(
-    publish / skip := true
+    publish / skip := true,
+    generateWireFixtures := (wireFixtureGenerator / generateWireFixtures).value,
+    generateWireFixtures / aggregate := false
   )
 
 lazy val protobufRuntimeScala =
@@ -38,6 +45,8 @@ lazy val protobufRuntimeScala =
         "com.lihaoyi" %%% "utest" % "0.9.5" % "test"
       ),
       scalacOptions ++= Seq("-release:8"),
+      Test / sourceGenerators +=
+        (wireFixtureGenerator / generateWireFixtures).taskValue,
       Compile / unmanagedSourceDirectories += {
         val base =
           (LocalRootProject / baseDirectory).value / "shared" / "src" / "main"
@@ -69,3 +78,49 @@ ThisBuild / testFrameworks += new TestFramework("utest.runner.Framework")
 lazy val runtimeJS = protobufRuntimeScala.js
 lazy val runtimeJVM = protobufRuntimeScala.jvm
 lazy val runtimeNative = protobufRuntimeScala.native
+
+// Keep this helper outside the runtime aggregate and library classpaths:
+// Google's classes have the same names as ours and run only in the generator JVM.
+lazy val wireFixtureGenerator = project
+  .in(file("tools/wire-fixtures"))
+  .settings(
+    scalaVersion := Scala212,
+    autoScalaLibrary := false,
+    scalacOptions := Nil,
+    crossPaths := false,
+    crossScalaVersions := Nil,
+    publish / skip := true,
+    libraryDependencies += "com.google.protobuf" % "protobuf-java" % ProtobufJava,
+    generateWireFixtures := {
+      val classpath = (Compile / fullClasspath).value.files
+      val output =
+        target.value / "generated-test-sources" / "WireFixtures.scala"
+      val javaExecutable = javaHome.value
+        .getOrElse(file(sys.props("java.home"))) / "bin" / "java"
+      val log = streams.value.log
+      val inputs = classpath.flatMap { entry =>
+        if (entry.isDirectory) (entry ** "*.class").get else Seq(entry)
+      }.toSet
+      val generate = FileFunction.cached(
+        streams.value.cacheDirectory / "wire-fixtures",
+        FilesInfo.lastModified,
+        FilesInfo.exists
+      ) { _: Set[File] =>
+        val source = sys.process
+          .Process(
+            Seq(
+              javaExecutable.getAbsolutePath,
+              "-cp",
+              classpath.mkString(java.io.File.pathSeparator),
+              "GenerateWireFixtures",
+              ProtobufJava
+            )
+          )
+          .!!
+        IO.write(output, source)
+        log.info(s"Generated wire fixtures: $output")
+        Set(output)
+      }
+      generate(inputs).toSeq
+    }
+  )
