@@ -1,5 +1,8 @@
 package com.google.protobuf
 
+// Compilation compatibility stubs, not a functional Java protobuf message or
+// reflection runtime. See README.md for the supported API and limitations.
+
 import com.google.protobuf.DescriptorProtos._
 
 object Descriptors {
