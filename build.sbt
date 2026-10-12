@@ -9,12 +9,12 @@ lazy val generateWireFixtures = taskKey[Seq[File]](
   "Generate shared wire-format test sources with Google's protobuf runtime"
 )
 
-ThisBuild / scalaVersion := Scala212
-ThisBuild / crossScalaVersions := Seq(Scala212, Scala213, Scala3)
+scalaVersion := Scala212
+crossScalaVersions := Seq(Scala212, Scala213, Scala3)
 
-ThisBuild / organization := "com.thesamet.scalapb"
+organization := "com.thesamet.scalapb"
 
-ThisBuild / scalacOptions ++= {
+scalacOptions ++= {
   if (scalaBinaryVersion.value == "2.12") {
     Seq("-Xfuture")
   } else {
@@ -22,7 +22,7 @@ ThisBuild / scalacOptions ++= {
   }
 }
 
-ThisBuild / scalacOptions ++= Seq(
+scalacOptions ++= Seq(
   "-deprecation"
 )
 
@@ -40,18 +40,21 @@ lazy val root = project
   )
   .settings(
     publish / skip := true,
-    generateWireFixtures := (wireFixtureGenerator / generateWireFixtures).value,
+    generateWireFixtures := Def.uncached {
+      (wireFixtureGenerator / generateWireFixtures).value
+    },
     generateWireFixtures / aggregate := false
   )
 
 lazy val protobufRuntimeScala =
   crossProject(JSPlatform, JVMPlatform, NativePlatform)
     .crossType(CrossType.Full)
+    .nativeSettings(nativeTestSettings)
     .in(file("."))
     .settings(
       name := "protobuf-runtime-scala",
       libraryDependencies ++= Seq(
-        "com.lihaoyi" %%% "utest" % "0.9.5" % "test"
+        "com.lihaoyi" %% "utest" % "0.9.5" % "test"
       ),
       scalacOptions ++= Seq("-release:8"),
       Test / sourceGenerators +=
@@ -72,7 +75,7 @@ lazy val protobufRuntimeScala =
           val g =
             "https://raw.githubusercontent.com/scalapb/protobuf-scala-runtime/" + sys.process
               .Process("git rev-parse HEAD")
-              .lineStream_!
+              .lazyLines_!
               .head
           val flag =
             if (version == 3) "-scalajs-mapSourceURI"
@@ -82,11 +85,12 @@ lazy val protobufRuntimeScala =
       })
     )
 
-ThisBuild / testFrameworks += new TestFramework("utest.runner.Framework")
+testFrameworks += new TestFramework("utest.runner.Framework")
 
 lazy val runtimeJS = protobufRuntimeScala.js
 lazy val runtimeJVM = protobufRuntimeScala.jvm
-lazy val runtimeNative = protobufRuntimeScala.native
+lazy val runtimeNative =
+  protobufRuntimeScala.native
 
 // Aggregate this helper so Scala Steward discovers its dependency, but do not
 // add it to runtime classpaths: Google's classes run only in the generator JVM.
@@ -100,21 +104,22 @@ lazy val wireFixtureGenerator = project
     crossScalaVersions := Nil,
     publish / skip := true,
     libraryDependencies += "com.google.protobuf" % "protobuf-java" % ProtobufJava,
-    generateWireFixtures := {
-      val classpath = (Compile / fullClasspath).value.files
+    generateWireFixtures := Def.uncached {
+      implicit val converter: xsbti.FileConverter = fileConverter.value
+      val classpath = (Compile / fullClasspath).value.files.map(_.toFile)
       val output =
         target.value / "generated-test-sources" / "WireFixtures.scala"
       val javaExecutable = javaHome.value
         .getOrElse(file(sys.props("java.home"))) / "bin" / "java"
       val log = streams.value.log
       val inputs = classpath.flatMap { entry =>
-        if (entry.isDirectory) (entry ** "*.class").get else Seq(entry)
+        if (entry.isDirectory) (entry ** "*.class").get() else Seq(entry)
       }.toSet
       val generate = FileFunction.cached(
         streams.value.cacheDirectory / "wire-fixtures",
         FilesInfo.lastModified,
         FilesInfo.exists
-      ) { _: Set[File] =>
+      ) { (_: Set[File]) =>
         val source = sys.process
           .Process(
             Seq(
@@ -144,11 +149,14 @@ lazy val binaryConsumer = project
     publish / skip := true,
     scalacOptions += "-release:8",
     libraryDependencies += "com.thesamet.scalapb" %% "protobuf-runtime-scala" % "0.8.16",
-    compatibilitySmoke := {
-      val oldClasspath = (Compile / fullClasspath).value.files
-      val currentJar = (runtimeJVM / Compile / packageBin).value
+    compatibilitySmoke := Def.uncached {
+      implicit val converter: xsbti.FileConverter = fileConverter.value
+      val oldClasspath = (Compile / fullClasspath).value.files.map(_.toFile)
+      val currentJar =
+        converter.toPath((runtimeJVM / Compile / packageBin).value).toFile
       val currentClasspath =
-        (runtimeJVM / Compile / dependencyClasspath).value.files :+ currentJar
+        (runtimeJVM / Compile / dependencyClasspath).value.files
+          .map(_.toFile) :+ currentJar
       require(
         oldClasspath
           .count(_.getName.startsWith("protobuf-runtime-scala_")) == 1,
@@ -178,12 +186,13 @@ lazy val binaryConsumer = project
 
 lazy val integration = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .crossType(CrossType.Full)
+  .nativeSettings(nativeTestSettings)
   .in(file("integration"))
   .dependsOn(protobufRuntimeScala)
   .settings(
     publish / skip := true,
     libraryDependencies ++= Seq(
-      ("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % Test)
+      ("com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % Test)
         .excludeAll(
           ExclusionRule(organization = "com.google.protobuf"),
           ExclusionRule(
@@ -191,13 +200,13 @@ lazy val integration = crossProject(JSPlatform, JVMPlatform, NativePlatform)
             name = "protobuf-runtime-scala*"
           )
         ),
-      "com.lihaoyi" %%% "utest" % "0.9.5" % Test
+      "com.lihaoyi" %% "utest" % "0.9.5" % Test
     ),
     Test / fullClasspath := {
       val classpath = (Test / fullClasspath).value
       require(
-        !classpath.exists { entry =>
-          val name = entry.data.getName
+        !(Test / externalDependencyClasspath).value.exists { entry =>
+          val name = entry.data.name
           name.startsWith("protobuf-java-") || name
             .startsWith("protobuf-runtime-scala_")
         },
@@ -220,4 +229,9 @@ lazy val integrationNative = integration.native
 
 runtimeJVM / mimaPreviousArtifacts := Set(
   organization.value %% "protobuf-runtime-scala" % "0.8.16"
+)
+
+// uTest uses an older, binary-compatible Native 0.5 test interface.
+lazy val nativeTestSettings = Seq(
+  libraryDependencySchemes += "org.scala-native" % s"test-interface_native0.5_${scalaBinaryVersion.value}" % "early-semver"
 )
