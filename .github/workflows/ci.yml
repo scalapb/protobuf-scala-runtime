@@ -16,7 +16,7 @@ jobs:
           distribution: temurin
           cache: sbt
       - uses: sbt/setup-sbt@v1
-      - run: sbt scalafmtCheckAll scalafmtSbtCheck
+      - run: sbt 'scalafmtCheckAll; scalafmtSbtCheck'
 
   build:
     runs-on: ubuntu-24.04
@@ -41,7 +41,7 @@ jobs:
         if: matrix.platform == 'Native'
         run: sudo apt-get update && sudo apt-get install -y clang libgc-dev libunwind-dev
       - name: Compile and test
-        run: sbt '++${{ matrix.scala }}' 'protobufRuntimeScala${{ matrix.platform }}/test' 'integration${{ matrix.platform }}/test'
+        run: sbt '++${{ matrix.scala }}; protobufRuntimeScala${{ matrix.platform }}/test; integration${{ matrix.platform }}/test'
 
   compatibility:
     runs-on: ubuntu-24.04
@@ -62,7 +62,7 @@ jobs:
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - name: Check binary compatibility and run the old consumer on Java 8
-        run: JAVA8_HOME="$JAVA_HOME_8_X64" sbt '++${{ matrix.scala }}' protobufRuntimeScalaJVM/mimaReportBinaryIssues binaryConsumer/compatibilitySmoke
+        run: JAVA8_HOME="$JAVA_HOME_8_X64" sbt '++${{ matrix.scala }}; protobufRuntimeScalaJVM/mimaReportBinaryIssues; binaryConsumer/compatibilitySmoke'
 
   # Stable required check for branch protection and Mergify, including failures.
   ci-passed:

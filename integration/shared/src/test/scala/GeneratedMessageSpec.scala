@@ -35,19 +35,21 @@ object GeneratedMessageSpec extends TestSuite {
       for (original <- Seq(Envelope(), message, message.withText("hello"))) {
         val wire = original.toByteArray
         assert(wire.length == original.serializedSize)
-        assert(Envelope.parseFrom(wire) == original)
+        val fromArray = Envelope.parseFrom(wire)
+        assert(fromArray == original)
         val sliced = ByteString
           .copyFrom(Array[Byte](99) ++ wire ++ Array[Byte](98))
           .slice(1, wire.length + 1)
-        assert(Envelope.parseFrom(sliced.newCodedInput()) == original)
+        val fromSlice = Envelope.parseFrom(sliced.newCodedInput())
+        assert(fromSlice == original)
         for (chunk <- Seq(1, 2, 7, 4096)) {
           val stream = new ByteArrayInputStream(wire) {
             override def read(b: Array[Byte], offset: Int, length: Int): Int =
               super.read(b, offset, math.min(chunk, length))
           }
-          assert(
-            Envelope.parseFrom(CodedInputStream.newInstance(stream)) == original
-          )
+          val fromStream =
+            Envelope.parseFrom(CodedInputStream.newInstance(stream))
+          assert(fromStream == original)
         }
       }
     }
@@ -58,7 +60,8 @@ object GeneratedMessageSpec extends TestSuite {
       }
       val parsed = Envelope.parseFrom(wire)
       assert(parsed.numbers == message.numbers :+ 42L)
-      assert(parsed.choice == Envelope.Choice.Text("last"))
+      val expectedChoice = Envelope.Choice.Text("last")
+      assert(parsed.choice == expectedChoice)
     }
     test("unknown fields survive generated message parse and serialization") {
       val extra = encoded { out =>
@@ -86,10 +89,10 @@ object GeneratedMessageSpec extends TestSuite {
         Array[Byte](-94, 6, 4, 1) // truncated unknown bytes
       )
       for (wire <- malformed) {
-        assertThrows[InvalidProtocolBufferException](Envelope.parseFrom(wire))
-        assertThrows[InvalidProtocolBufferException](
-          Envelope.parseFrom(new ByteArrayInputStream(wire))
-        )
+        def parseArray() = Envelope.parseFrom(wire)
+        assertThrows[InvalidProtocolBufferException](parseArray())
+        def parseStream() = Envelope.parseFrom(new ByteArrayInputStream(wire))
+        assertThrows[InvalidProtocolBufferException](parseStream())
       }
     }
     test("downstream source compatibility") {
