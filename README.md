@@ -10,20 +10,19 @@ ScalaPB normally selects this runtime for the relevant platform. For direct use
 with sbt 2, `%%` selects the Scala version and the project's platform:
 
 ```scala
-libraryDependencies += "com.thesamet.scalapb" %% "protobuf-runtime-scala" % "0.8.16"
+libraryDependencies += "com.thesamet.scalapb" %% "protobuf-runtime-scala" % "0.9.0"
 ```
 
 With sbt 1 and sbt-crossproject, use `%%%` for cross-platform projects:
 
 ```scala
-libraryDependencies += "com.thesamet.scalapb" %%% "protobuf-runtime-scala" % "0.8.16"
+libraryDependencies += "com.thesamet.scalapb" %%% "protobuf-runtime-scala" % "0.9.0"
 ```
 
-For a JVM-only sbt 1 project, use `%%`. `0.8.16` is the latest release;
-the fixes described below are included in **0.9.0** and currently require a
-snapshot or locally published build. Choose the runtime version required by your
-ScalaPB version. Do not place this library and `protobuf-java` on the same JVM classpath:
-both define classes in `com.google.protobuf`.
+For a JVM-only sbt 1 project, use `%%`. **0.9.0** includes the fixes described
+below. Choose the runtime version required by your ScalaPB version. Do not place
+this library and `protobuf-java` on the same JVM classpath: both define classes
+in `com.google.protobuf`.
 
 | Component | Build/test version |
 | --- | --- |
@@ -151,12 +150,12 @@ including the generator's `protobuf-java`, remain eligible for normal updates.
 
 ## Publishing
 
-The next release is **0.9.0**, reflecting the `ByteString.bytes` source
+Release **0.9.0** reflects the `ByteString.bytes` source
 incompatibility described in [release notes](RELEASE_NOTES.md). Published metadata
 declares `early-semver`: while versions are below 1.0, patch releases preserve
 source and binary compatibility within a minor line; minor releases may break it.
 The build derives release versions from Git tags. After the release commit passes
-CI and snapshot publication, tag that commit `v0.9.0` to publish the release.
+CI and snapshot publication, tag that commit `v<version>` to publish the release.
 
 Publishing uses sbt-ci-release and Maven Central's **Central Portal**, not the
 retired OSSRH service. The release workflow runs the complete CI matrix before
