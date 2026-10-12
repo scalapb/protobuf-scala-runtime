@@ -149,7 +149,7 @@ lazy val binaryConsumer = project
   .settings(
     publish / skip := true,
     scalacOptions += "-release:8",
-    libraryDependencies += "com.thesamet.scalapb" %% "protobuf-runtime-scala" % "0.8.16",
+    libraryDependencies += "com.thesamet.scalapb" %% "protobuf-runtime-scala" % "0.9.0",
     compatibilitySmoke := Def.uncached {
       implicit val converter: xsbti.FileConverter = fileConverter.value
       val oldClasspath = (Compile / fullClasspath).value.files.map(_.toFile)
