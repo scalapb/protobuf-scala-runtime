@@ -20,7 +20,7 @@ libraryDependencies += "com.thesamet.scalapb" %%% "protobuf-runtime-scala" % "0.
 ```
 
 For a JVM-only sbt 1 project, use `%%`. `0.8.16` is the latest release;
-the fixes described below are planned for **0.9.0** and currently require a
+the fixes described below are included in **0.9.0** and currently require a
 snapshot or locally published build. Choose the runtime version required by your
 ScalaPB version. Do not place this library and `protobuf-java` on the same JVM classpath:
 both define classes in `com.google.protobuf`.
