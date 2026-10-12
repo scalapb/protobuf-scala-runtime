@@ -56,7 +56,7 @@ this library with `protobuf-java` on a JVM application classpath.
 
 - Scala 2.12.21, 2.13.18, and 3.3.8; Scala Steward keeps Scala 3 on the 3.3 line.
 - Scala.js 1.22.0 and Scala Native 0.5.12.
-- sbt 1.13.0 and JDK 21 for building, with Java 8 as the published JVM target.
+- sbt 2.0.10 and JDK 21 for building, with Java 8 as the published JVM target.
 - Publishing uses Maven Central's Central Portal through sbt-ci-release.
 - Release CI requires formatting, runtime/integration tests, and compatibility
   checks before publishing. Test helpers are excluded from publication.

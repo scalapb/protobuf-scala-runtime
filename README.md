@@ -24,7 +24,7 @@ both define classes in `com.google.protobuf`.
 | Scala | 2.12.21, 2.13.18, 3.3.8 |
 | Scala.js | 1.22.0 |
 | Scala Native | 0.5.12 |
-| sbt | 1.13.0 |
+| sbt | 2.0.10 |
 | Build JDK | 21 |
 | JVM bytecode/API target | Java 8 |
 | CI JavaScript runtime | Node.js 22 |
@@ -66,11 +66,11 @@ commands (using your configured nixpkgs).
 
 ```sh
 sbt +test
-sbt scalafmtCheckAll scalafmtSbtCheck
+sbt 'scalafmtCheckAll; scalafmtSbtCheck'
 # A single compiler/platform:
-sbt '++2.13.18' 'protobufRuntimeScalaJVM/test'
-sbt '++3.3.8' 'protobufRuntimeScalaJS/test'
-sbt '++2.12.21' 'protobufRuntimeScalaNative/test'
+sbt '++2.13.18; protobufRuntimeScalaJVM/test'
+sbt '++3.3.8; protobufRuntimeScalaJS/test'
+sbt '++2.12.21; protobufRuntimeScalaNative/test'
 ```
 
 The shared regression suites cover:
@@ -96,7 +96,7 @@ sbt generates the wire fixtures automatically before compiling tests. The
 `wireFixtureGenerator` Java-only subproject resolves the pinned `protobuf-java`
 dependency and runs in a separate JVM, keeping Google's identically named classes
 out of the runtime and test classpaths. All platforms consume the same generated
-source under `tools/wire-fixtures/target/generated-test-sources`; it is not
+source under `target/out/jvm/u/wirefixturegenerator/generated-test-sources`; it is not
 committed or included in published artifacts.
 
 Generation is cached by the generator's compiled classes and dependency jars.
