@@ -1,4 +1,4 @@
-# 0.9.0 (unreleased)
+# 0.9.0 (2026-10-11)
 
 This release fixes byte-slice handling, malformed-input validation, and output
 buffer edge cases. The wire format for valid messages is unchanged.
@@ -66,6 +66,3 @@ this library with `protobuf-java` on a JVM application classpath.
 - Publishing uses Maven Central's Central Portal through sbt-ci-release.
 - Release CI requires formatting, runtime/integration tests, and compatibility
   checks before publishing. Test helpers are excluded from publication.
-
-Before tagging `v0.9.0`, replace the unreleased marker with the release date and
-require successful CI and snapshot publication for the exact commit being tagged.
