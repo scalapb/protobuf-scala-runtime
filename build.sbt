@@ -13,6 +13,7 @@ scalaVersion := Scala212
 crossScalaVersions := Seq(Scala212, Scala213, Scala3)
 
 organization := "com.thesamet.scalapb"
+versionScheme := Some("early-semver")
 
 scalacOptions ++= {
   if (scalaBinaryVersion.value == "2.12") {
@@ -197,7 +198,16 @@ lazy val integration = crossProject(JSPlatform, JVMPlatform, NativePlatform)
           ExclusionRule(organization = "com.google.protobuf"),
           ExclusionRule(
             organization = "com.thesamet.scalapb",
-            name = "protobuf-runtime-scala*"
+            name = s"protobuf-runtime-scala_${scalaBinaryVersion.value}"
+          ),
+          ExclusionRule(
+            organization = "com.thesamet.scalapb",
+            name = s"protobuf-runtime-scala_sjs1_${scalaBinaryVersion.value}"
+          ),
+          ExclusionRule(
+            organization = "com.thesamet.scalapb",
+            name =
+              s"protobuf-runtime-scala_native0.5_${scalaBinaryVersion.value}"
           )
         ),
       "com.lihaoyi" %% "utest" % "0.9.5" % Test

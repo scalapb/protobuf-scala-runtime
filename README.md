@@ -7,16 +7,22 @@ JVM without depending on Google's Java runtime.
 ## Using the library
 
 ScalaPB normally selects this runtime for the relevant platform. For direct use
-in an sbt cross-project with sbt-crossproject installed:
+with sbt 2, `%%` selects the Scala version and the project's platform:
+
+```scala
+libraryDependencies += "com.thesamet.scalapb" %% "protobuf-runtime-scala" % "0.8.16"
+```
+
+With sbt 1 and sbt-crossproject, use `%%%` for cross-platform projects:
 
 ```scala
 libraryDependencies += "com.thesamet.scalapb" %%% "protobuf-runtime-scala" % "0.8.16"
 ```
 
-For a JVM-only project, use `%%` instead of `%%%`. `0.8.16` is the latest release
-tag in this checkout; the fixes described below require the next release or a
-locally published build. Choose the runtime version required by your ScalaPB
-version. Do not place this library and `protobuf-java` on the same JVM classpath:
+For a JVM-only sbt 1 project, use `%%`. `0.8.16` is the latest release;
+the fixes described below are included in **0.9.0** and currently require a
+snapshot or locally published build. Choose the runtime version required by your
+ScalaPB version. Do not place this library and `protobuf-java` on the same JVM classpath:
 both define classes in `com.google.protobuf`.
 
 | Component | Build/test version |
@@ -122,13 +128,16 @@ Scala wire runtime so the tests exercise this checkout. They are not published.
 ```sh
 sbt +test
 sbt '+protobufRuntimeScalaJVM/mimaReportBinaryIssues'
+sbt shutdown
 JAVA8_HOME=/path/to/jdk8 sbt '+binaryConsumer/compatibilitySmoke'
 ```
 
 MiMa checks the JVM API against 0.8.16. The binary consumer is compiled against
 that release, then run unchanged against the candidate. `JAVA8_HOME` selects the
-runtime for this fork; without it the check uses the build JDK. CI always supplies
-Java 8. Integration tests also compile the consumer source against the candidate.
+runtime for this fork; without it the check uses the build JDK. sbt 2 reuses a
+server process and its environment, so run `sbt shutdown` before changing
+`JAVA8_HOME`. CI supplies Java 8 before starting its sbt server. Integration
+tests also compile the consumer source against the candidate.
 The `bytes` getter retains its JVM signature, but its change from a Scala `val`
 to a `def` affects stable-path source uses; see [release notes](RELEASE_NOTES.md).
 
@@ -141,6 +150,13 @@ cover the JVM compiler/library, both Scala.js module naming forms, and Native's
 including the generator's `protobuf-java`, remain eligible for normal updates.
 
 ## Publishing
+
+The next release is **0.9.0**, reflecting the `ByteString.bytes` source
+incompatibility described in [release notes](RELEASE_NOTES.md). Published metadata
+declares `early-semver`: while versions are below 1.0, patch releases preserve
+source and binary compatibility within a minor line; minor releases may break it.
+The build derives release versions from Git tags. After the release commit passes
+CI and snapshot publication, tag that commit `v0.9.0` to publish the release.
 
 Publishing uses sbt-ci-release and Maven Central's **Central Portal**, not the
 retired OSSRH service. The release workflow runs the complete CI matrix before

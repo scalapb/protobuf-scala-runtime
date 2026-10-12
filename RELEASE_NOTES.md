@@ -1,7 +1,11 @@
-# Next release (unreleased)
+# 0.9.0 (unreleased)
 
 This release fixes byte-slice handling, malformed-input validation, and output
 buffer edge cases. The wire format for valid messages is unchanged.
+
+The minor version bump reflects the `ByteString.bytes` source incompatibility
+described below. Published metadata declares `early-semver`; 0.9.x patch releases
+will preserve source and binary compatibility within the 0.9 line.
 
 ## Behavior changes and migration
 
@@ -24,6 +28,8 @@ buffer edge cases. The wire format for valid messages is unchanged.
   ScalaPB-generated message parsers.
 - Embedded limits and length arithmetic reject overflow. Very short stream reads
   no longer grow the call stack; invalid `InputStream.read` results are rejected.
+- `CodedInputStream.getLastTag()` exposes the last tag read, matching the Google
+  protobuf API.
 - Streaming `CodedOutputStream` buffers must be positive in size. Zero or negative
   sizes now throw `IllegalArgumentException` at construction. Empty flat-array
   outputs remain valid for empty messages. This fixes a hang when writing a
@@ -61,5 +67,5 @@ this library with `protobuf-java` on a JVM application classpath.
 - Release CI requires formatting, runtime/integration tests, and compatibility
   checks before publishing. Test helpers are excluded from publication.
 
-Before tagging, select the release version, move these notes under that version,
-and require a green CI run for the exact commit being tagged.
+Before tagging `v0.9.0`, replace the unreleased marker with the release date and
+require successful CI and snapshot publication for the exact commit being tagged.
