@@ -13,6 +13,7 @@ scalaVersion := Scala212
 crossScalaVersions := Seq(Scala212, Scala213, Scala3)
 
 organization := "com.thesamet.scalapb"
+versionScheme := Some("early-semver")
 
 scalacOptions ++= {
   if (scalaBinaryVersion.value == "2.12") {
