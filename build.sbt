@@ -2,7 +2,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 val Scala212 = "2.12.21"
 val Scala213 = "2.13.18"
-val Scala3 = "3.3.8"
+val Scala3 = "3.3.9"
 val ProtobufJava = "4.36.2"
 
 lazy val generateWireFixtures = taskKey[Seq[File]](
